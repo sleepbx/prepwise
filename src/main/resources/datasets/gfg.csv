@@ -1,0 +1,131 @@
+slug,title,difficulty,topic,pattern
+reverse-an-array,Reverse an array,EASY,ARRAY,TWO_POINTER
+find-the-maximum-and-minimum-element-in-an-array,Find Max and Min in Array,EASY,ARRAY,TWO_POINTER
+kth-largest-element-in-an-array,Kth largest element in an array,MEDIUM,ARRAY,TOP_K
+sort-an-array-of-0s-1s-and-2s,Sort 0s 1s 2s,MEDIUM,ARRAY,TWO_POINTER
+find-the-union-and-intersection-of-two-sorted-arrays,Union and Intersection,EASY,ARRAY,TWO_POINTER
+cyclically-rotate-an-array-by-one,Rotate array by one,EASY,ARRAY,TWO_POINTER
+find-the-missing-number,Find the missing number,EASY,ARRAY,HASHING
+search-an-element-in-a-sorted-and-rotated-array,Search in rotated sorted array,MEDIUM,ARRAY,BINARY_SEARCH_PATTERN
+find-pair-with-given-sum,Find pair with given sum,EASY,ARRAY,HASHING
+maximum-subarray-sum,Maximum subarray sum,MEDIUM,ARRAY,SLIDING_WINDOW
+merge-two-sorted-arrays,Merge two sorted arrays,EASY,ARRAY,TWO_POINTER
+kadanes-algorithm,Kadane's Algorithm,MEDIUM,ARRAY,SLIDING_WINDOW
+stock-buy-and-sell,Stock buy and sell,EASY,ARRAY,SLIDING_WINDOW
+find-the-duplicate-number,Find the duplicate number,MEDIUM,ARRAY,BINARY_SEARCH_PATTERN
+merge-intervals,Merge Intervals,MEDIUM,ARRAY,INTERVALS
+n-meetings-in-one-room,N meetings in one room,MEDIUM,ARRAY,GREEDY_PATTERN
+minimum-platforms,Minimum Platforms,MEDIUM,ARRAY,GREEDY_PATTERN
+job-sequencing-problem,Job Sequencing Problem,MEDIUM,ARRAY,GREEDY_PATTERN
+activity-selection-problem,Activity Selection Problem,MEDIUM,ARRAY,GREEDY_PATTERN
+fractional-knapsack-problem,Fractional Knapsack,MEDIUM,DP,KNAPSACK
+0-1-knapsack-problem,0-1 Knapsack,MEDIUM,DP,KNAPSACK
+longest-common-subsequence,Longest Common Subsequence,MEDIUM,STRING,DP
+edit-distance-dp-5,Edit Distance,MEDIUM,STRING,DP
+subset-sum-problem-dp-25,Subset Sum Problem,MEDIUM,DP,KNAPSACK
+coin-change-dp-7,Coin Change,MEDIUM,DP,KNAPSACK
+matrix-chain-multiplication-dp-8,Matrix Chain Multiplication,HARD,DP,DP
+longest-palindromic-subsequence-dp-13,Longest Palindromic Subsequence,MEDIUM,STRING,DP
+implement-stack-using-array,Implement Stack using Array,EASY,STACK,STACK
+implement-queue-using-array,Implement Queue using Array,EASY,QUEUE,QUEUE
+reverse-a-stack,Reverse a Stack,MEDIUM,STACK,STACK
+next-greater-element,Next Greater Element,MEDIUM,STACK,MONOTONIC_STACK
+largest-rectangle-in-a-histogram,Largest Rectangle in Histogram,HARD,STACK,MONOTONIC_STACK
+level-order-traversal,Level Order Traversal,MEDIUM,TREE,BFS
+inorder-traversal,Inorder Traversal,EASY,TREE,DFS
+preorder-traversal,Preorder Traversal,EASY,TREE,DFS
+postorder-traversal,Postorder Traversal,EASY,TREE,DFS
+height-of-binary-tree,Height of Binary Tree,EASY,TREE,DFS
+diameter-of-binary-tree,Diameter of Binary Tree,EASY,TREE,DFS
+lowest-common-ancestor-in-a-binary-tree,LCA in Binary Tree,MEDIUM,TREE,DFS
+check-if-binary-tree-is-balanced,Check if Tree is Balanced,EASY,TREE,DFS
+detect-cycle-in-an-undirected-graph,Detect Cycle Undirected Graph,MEDIUM,GRAPH,DFS
+detect-cycle-in-a-directed-graph,Detect Cycle Directed Graph,MEDIUM,GRAPH,DFS
+topological-sort,Topological Sort,MEDIUM,GRAPH,TOPOLOGICAL_SORT
+shortest-path-in-unweighted-graph,Shortest Path Unweighted,MEDIUM,GRAPH,BFS
+dijkstra-algorithm,Dijkstra Algorithm,MEDIUM,GRAPH,SHORTEST_PATH
+bellman-ford-algorithm,Bellman Ford Algorithm,MEDIUM,GRAPH,SHORTEST_PATH
+floyd-warshall,Floyd Warshall,MEDIUM,GRAPH,SHORTEST_PATH
+kruskal-minimum-spanning-tree-algorithm,Kruskal MST,HARD,GRAPH,UNION_FIND
+prims-minimum-spanning-tree-algorithm,Prims MST,HARD,GRAPH,GREEDY_PATTERN
+disjoint-set-union-find,Disjoint Set Union Find,MEDIUM,GRAPH,UNION_FIND
+lc-practice-0000,Practice Problem 0,EASY,QUEUE,HASHING
+lc-practice-0001,Practice Problem 1,HARD,STACK,SLIDING_WINDOW
+lc-practice-0002,Practice Problem 2,HARD,STRING,GREEDY_PATTERN
+lc-practice-0003,Practice Problem 3,HARD,GRAPH,SHORTEST_PATH
+lc-practice-0004,Practice Problem 4,HARD,STACK,PREFIX_SUM
+lc-practice-0005,Practice Problem 5,HARD,DP,MONOTONIC_STACK
+lc-practice-0006,Practice Problem 6,MEDIUM,STACK,TWO_POINTER
+lc-practice-0007,Practice Problem 7,EASY,LINKED_LIST,DFS
+lc-practice-0008,Practice Problem 8,EASY,LINKED_LIST,HASHING
+lc-practice-0009,Practice Problem 9,EASY,QUEUE,BFS
+lc-practice-0010,Practice Problem 10,HARD,DP,LIS
+lc-practice-0011,Practice Problem 11,EASY,LINKED_LIST,KNAPSACK
+lc-practice-0012,Practice Problem 12,HARD,BACKTRACKING,BACKTRACKING_PATTERN
+lc-practice-0013,Practice Problem 13,HARD,BACKTRACKING,INTERVALS
+lc-practice-0014,Practice Problem 14,EASY,GRAPH,LIS
+lc-practice-0015,Practice Problem 15,MEDIUM,STRING,BACKTRACKING_PATTERN
+lc-practice-0016,Practice Problem 16,EASY,TREE,MONOTONIC_STACK
+lc-practice-0017,Practice Problem 17,MEDIUM,LINKED_LIST,SHORTEST_PATH
+lc-practice-0018,Practice Problem 18,MEDIUM,BINARY_SEARCH,RECURSION
+lc-practice-0019,Practice Problem 19,EASY,HEAP,INTERVALS
+lc-practice-0020,Practice Problem 20,HARD,STRING,MONOTONIC_STACK
+lc-practice-0021,Practice Problem 21,MEDIUM,HEAP,DFS
+lc-practice-0022,Practice Problem 22,MEDIUM,QUEUE,KNAPSACK
+lc-practice-0023,Practice Problem 23,MEDIUM,QUEUE,BINARY_SEARCH_PATTERN
+lc-practice-0024,Practice Problem 24,EASY,GREEDY,HASHING
+lc-practice-0025,Practice Problem 25,MEDIUM,DP,SORTING
+lc-practice-0026,Practice Problem 26,EASY,GRAPH,HASHING
+lc-practice-0027,Practice Problem 27,HARD,TREE,BFS
+lc-practice-0028,Practice Problem 28,MEDIUM,BINARY_SEARCH,BINARY_SEARCH_PATTERN
+lc-practice-0029,Practice Problem 29,EASY,GREEDY,SORTING
+lc-practice-0030,Practice Problem 30,MEDIUM,DP,TWO_POINTER
+lc-practice-0031,Practice Problem 31,EASY,BINARY_SEARCH,DFS
+lc-practice-0032,Practice Problem 32,EASY,TREE,BACKTRACKING_PATTERN
+lc-practice-0033,Practice Problem 33,MEDIUM,ARRAY,SLIDING_WINDOW
+lc-practice-0034,Practice Problem 34,MEDIUM,STACK,DFS
+lc-practice-0035,Practice Problem 35,MEDIUM,GREEDY,SHORTEST_PATH
+lc-practice-0036,Practice Problem 36,HARD,HEAP,BACKTRACKING_PATTERN
+lc-practice-0037,Practice Problem 37,EASY,TREE,TOPOLOGICAL_SORT
+lc-practice-0038,Practice Problem 38,HARD,DP,SORTING
+lc-practice-0039,Practice Problem 39,HARD,GRAPH,TWO_POINTER
+lc-practice-0040,Practice Problem 40,HARD,TREE,RECURSION
+lc-practice-0041,Practice Problem 41,MEDIUM,BINARY_SEARCH,LIS
+lc-practice-0042,Practice Problem 42,HARD,GREEDY,SORTING
+lc-practice-0043,Practice Problem 43,HARD,LINKED_LIST,TOP_K
+lc-practice-0044,Practice Problem 44,MEDIUM,BINARY_SEARCH,INTERVALS
+lc-practice-0045,Practice Problem 45,MEDIUM,STACK,INTERVALS
+lc-practice-0046,Practice Problem 46,MEDIUM,HEAP,LIS
+lc-practice-0047,Practice Problem 47,HARD,HEAP,HASHING
+lc-practice-0048,Practice Problem 48,HARD,BACKTRACKING,LIS
+lc-practice-0049,Practice Problem 49,MEDIUM,GRAPH,SLIDING_WINDOW
+lc-practice-0050,Practice Problem 50,MEDIUM,GREEDY,SLIDING_WINDOW
+lc-practice-0051,Practice Problem 51,MEDIUM,TREE,KNAPSACK
+lc-practice-0052,Practice Problem 52,HARD,HEAP,LIS
+lc-practice-0053,Practice Problem 53,EASY,GRAPH,PREFIX_SUM
+lc-practice-0054,Practice Problem 54,HARD,STRING,HASHING
+lc-practice-0055,Practice Problem 55,HARD,STRING,SORTING
+lc-practice-0056,Practice Problem 56,HARD,BINARY_SEARCH,DFS
+lc-practice-0057,Practice Problem 57,MEDIUM,GRAPH,PREFIX_SUM
+lc-practice-0058,Practice Problem 58,MEDIUM,LINKED_LIST,HASHING
+lc-practice-0059,Practice Problem 59,EASY,HEAP,PREFIX_SUM
+lc-practice-0060,Practice Problem 60,EASY,TREE,GREEDY_PATTERN
+lc-practice-0061,Practice Problem 61,EASY,STRING,SORTING
+lc-practice-0062,Practice Problem 62,MEDIUM,HEAP,RECURSION
+lc-practice-0063,Practice Problem 63,HARD,STRING,UNION_FIND
+lc-practice-0064,Practice Problem 64,HARD,HEAP,DFS
+lc-practice-0065,Practice Problem 65,MEDIUM,ARRAY,MONOTONIC_STACK
+lc-practice-0066,Practice Problem 66,EASY,LINKED_LIST,SHORTEST_PATH
+lc-practice-0067,Practice Problem 67,EASY,LINKED_LIST,HASHING
+lc-practice-0068,Practice Problem 68,HARD,GREEDY,PREFIX_SUM
+lc-practice-0069,Practice Problem 69,MEDIUM,HEAP,TOP_K
+lc-practice-0070,Practice Problem 70,HARD,DP,TOPOLOGICAL_SORT
+lc-practice-0071,Practice Problem 71,HARD,DP,TOPOLOGICAL_SORT
+lc-practice-0072,Practice Problem 72,MEDIUM,TREE,RECURSION
+lc-practice-0073,Practice Problem 73,HARD,DP,TOP_K
+lc-practice-0074,Practice Problem 74,MEDIUM,TREE,TWO_POINTER
+lc-practice-0075,Practice Problem 75,MEDIUM,LINKED_LIST,INTERVALS
+lc-practice-0076,Practice Problem 76,EASY,QUEUE,BFS
+lc-practice-0077,Practice Problem 77,MEDIUM,STACK,DFS
+lc-practice-0078,Practice Problem 78,MEDIUM,LINKED_LIST,LIS
+lc-practice-0079,Practice Problem 79,EASY,HEAP,MONOTONIC_STACK

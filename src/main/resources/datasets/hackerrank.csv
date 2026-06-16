@@ -1,0 +1,118 @@
+slug,title,difficulty,topic,pattern
+arrays-ds,Arrays DS,EASY,ARRAY,TWO_POINTER
+2d-array-ds,2D Array DS,EASY,ARRAY,TWO_POINTER
+array-left-rotation,Left Rotation,EASY,ARRAY,TWO_POINTER
+new-year-chaos,New Year Chaos,MEDIUM,ARRAY,GREEDY_PATTERN
+minimum-swaps-2,Minimum Swaps 2,MEDIUM,ARRAY,HASHING
+array-manipulation,Array Manipulation,HARD,ARRAY,PREFIX_SUM
+cracking-the-coding-interview-arrays-left-rotation,Left Rotation CTCI,EASY,ARRAY,TWO_POINTER
+cracking-the-coding-interview-arrays-array-left-rotation,Array Left Rotation,EASY,ARRAY,TWO_POINTER
+hash-tables-ransom-note,Ransom Note,EASY,STRING,HASHING
+hash-tables-two-sum,Two Sum HR,EASY,ARRAY,HASHING
+hash-tables-check-complete,Check Complete,EASY,STRING,HASHING
+hash-tables-sherlock-and-anagrams,Sherlock and Anagrams,MEDIUM,STRING,HASHING
+hash-tables-frequency-queries,Frequency Queries,MEDIUM,ARRAY,HASHING
+trees-insert-a-node-into-a-binary-search-tree,Insert BST Node,EASY,TREE,DFS
+trees-height-of-a-binary-tree,Height of Binary Tree HR,EASY,TREE,DFS
+trees-level-order-traversal,Level Order Traversal HR,EASY,TREE,BFS
+trees-huffman-decoding,Huffman Decoding,MEDIUM,TREE,GREEDY_PATTERN
+trees-swap-nodes,Swap Nodes,MEDIUM,TREE,BFS
+trees-is-this-a-binary-search-tree,Is BST,MEDIUM,TREE,DFS
+trees-kittys-calculations-on-a-tree,Kitty Calculations on Tree,HARD,TREE,DFS
+stacks-balanced-brackets,Balanced Brackets,MEDIUM,STRING,STACK
+stacks-next-greater-element,Next Greater Element HR,MEDIUM,STACK,MONOTONIC_STACK
+stacks-largest-rectangle,Largest Rectangle HR,HARD,STACK,MONOTONIC_STACK
+stacks-and-queues-queue-using-two-stacks,Queue using Two Stacks,MEDIUM,STACK,STACK
+stacks-and-queues-and-in-one,Stack and Queue in One,MEDIUM,STACK,STACK
+queues-ctci,Queue CTCI,EASY,QUEUE,QUEUE
+heap-find-the-running-median,Find the Running Median,HARD,HEAP,TOP_K
+heap-qheap1,QHEAP1,MEDIUM,HEAP,TOP_K
+heap-sort,Heap Sort,MEDIUM,HEAP,SORTING
+greedy-algorithms-jim-and-the-orders,Jim and the Orders,EASY,ARRAY,GREEDY_PATTERN
+greedy-algorithms-luck-balance,Luck Balance,EASY,ARRAY,GREEDY_PATTERN
+greedy-algorithms-maximum-perimeter-triangle,Maximum Perimeter Triangle,EASY,ARRAY,GREEDY_PATTERN
+greedy-algorithms-sherlock-and-the-beast,Sherlock and the Beast,MEDIUM,STRING,GREEDY_PATTERN
+greedy-algorithms-priyanka-and-the-twisted-shopping,Priyanka Shopping,MEDIUM,ARRAY,GREEDY_PATTERN
+dynamic-programming-coin-change,Coin Change HR,MEDIUM,DP,KNAPSACK
+dynamic-programming-knapsack,Knapsack HR,MEDIUM,DP,KNAPSACK
+dynamic-programming-longest-common-subsequence,LCS HR,MEDIUM,STRING,DP
+dynamic-programming-edit-distance,Edit Distance HR,MEDIUM,STRING,DP
+dynamic-programming-maximum-subarray,Max Subarray HR,EASY,ARRAY,SLIDING_WINDOW
+dynamic-programming-sherlock-and-cost,Sherlock and Cost,MEDIUM,DP,DP
+graph-theory-journey-to-the-moon,Journey to the Moon,MEDIUM,GRAPH,UNION_FIND
+graph-theory-roads-and-libraries,Roads and Libraries,MEDIUM,GRAPH,UNION_FIND
+graph-theory-synchronous-shopping,Synchronous Shopping,MEDIUM,GRAPH,BFS
+graph-theory-kruskalmstrals-algorithm,Kruskal MST HR,MEDIUM,GRAPH,UNION_FIND
+graph-theory-prims-minimum-spanning-tree,Prims MST HR,MEDIUM,GRAPH,GREEDY_PATTERN
+graph-theory-shortest-path,Shortest Path HR,MEDIUM,GRAPH,SHORTEST_PATH
+graph-theory-bfsshortreach,BFS Short Reach,MEDIUM,GRAPH,BFS
+graph-theory-dijkstrashortreach,Dijkstra Short Reach,HARD,GRAPH,SHORTEST_PATH
+search-binary-search,Binary Search HR,EASY,ARRAY,BINARY_SEARCH_PATTERN
+search-ice-cream-parlor,Ice Cream Parlor,EASY,ARRAY,HASHING
+search-triple-sum,Triple Sum HR,MEDIUM,ARRAY,TWO_POINTER
+search-minimum-loss,Minimum Loss,MEDIUM,ARRAY,BINARY_SEARCH_PATTERN
+search-pairs,Pairs HR,MEDIUM,ARRAY,TWO_POINTER
+sorting-counting-sort-1,Counting Sort 1,EASY,ARRAY,SORTING
+sorting-counting-sort-2,Counting Sort 2,MEDIUM,ARRAY,SORTING
+sorting-insertion-sort,Insertion Sort,EASY,ARRAY,SORTING
+sorting-quick-sort,Quick Sort,MEDIUM,ARRAY,SORTING
+sorting-almost-sorted,Almost Sorted,MEDIUM,ARRAY,SORTING
+strings-sherlock-and-valid-string,Sherlock Valid String,MEDIUM,STRING,GREEDY_PATTERN
+strings-ashton-and-string,Ashton and String,HARD,STRING,HASHING
+strings-common-child,Common Child,MEDIUM,STRING,DP
+strings-morgan-and-a-string,Morgan and a String,HARD,STRING,GREEDY_PATTERN
+interview-preparation-kit-arrays-two-sum,IPK Two Sum,EASY,ARRAY,HASHING
+interview-preparation-kit-arrays-array-manipulation,IPK Array Manipulation,HARD,ARRAY,PREFIX_SUM
+interview-preparation-kit-arrays-new-year-chaos,IPK New Year Chaos,MEDIUM,ARRAY,GREEDY_PATTERN
+interview-preparation-kit-dictionaries-hash-tables-ransom-note,IPK Ransom Note,EASY,STRING,HASHING
+interview-preparation-kit-dictionaries-hash-tables-two-sum,IPK Hash Two Sum,EASY,ARRAY,HASHING
+interview-preparation-kit-dictionaries-hash-tables-sherlock-and-anagrams,IPK Anagrams,MEDIUM,STRING,HASHING
+interview-preparation-kit-dictionaries-hash-tables-frequency-queries,IPK Freq Queries,MEDIUM,ARRAY,HASHING
+interview-preparation-kit-string-manipulation-alternating-characters,IPK Alternating Chars,EASY,STRING,SLIDING_WINDOW
+interview-preparation-kit-string-manipulation-special-palindrome-again,IPK Special Palindrome,MEDIUM,STRING,HASHING
+interview-preparation-kit-string-manipulation-sherlock-and-the-valid-string,IPK Valid String,MEDIUM,STRING,GREEDY_PATTERN
+interview-preparation-kit-string-manipulation-common-child,IPK Common Child,MEDIUM,STRING,DP
+interview-preparation-kit-string-manipulation-morgan-and-a-string,IPK Morgan String,HARD,STRING,GREEDY_PATTERN
+interview-preparation-kit-sorting-bubble-sort,IPK Bubble Sort,EASY,ARRAY,SORTING
+interview-preparation-kit-sorting-counting-sort,IPK Counting Sort,MEDIUM,ARRAY,SORTING
+interview-preparation-kit-sorting-insertion-sort,IPK Insertion Sort,EASY,ARRAY,SORTING
+interview-preparation-kit-sorting-quick-sort,IPK Quick Sort,MEDIUM,ARRAY,SORTING
+interview-preparation-kit-search-minimum-loss,IPK Minimum Loss,MEDIUM,ARRAY,BINARY_SEARCH_PATTERN
+interview-preparation-kit-search-triple-sum,IPK Triple Sum,MEDIUM,ARRAY,TWO_POINTER
+interview-preparation-kit-search-pairs,IPK Pairs,MEDIUM,ARRAY,TWO_POINTER
+interview-preparation-kit-stacks-balanced-brackets,IPK Balanced Brackets,MEDIUM,STRING,STACK
+interview-preparation-kit-stacks-queues-largest-rectangle,IPK Largest Rectangle,HARD,STACK,MONOTONIC_STACK
+interview-preparation-kit-trees-height-of-a-binary-tree,IPK Tree Height,EASY,TREE,DFS
+interview-preparation-kit-trees-swap-nodes,IPK Swap Nodes,MEDIUM,TREE,BFS
+interview-preparation-kit-trees-is-this-a-binary-search-tree,IPK Is BST,MEDIUM,TREE,DFS
+interview-preparation-kit-dynamic-programming-coin-change,IPK Coin Change,MEDIUM,DP,KNAPSACK
+interview-preparation-kit-dynamic-programming-knapsack,IPK Knapsack,MEDIUM,DP,KNAPSACK
+interview-preparation-kit-dynamic-programming-longest-common-subsequence,IPK LCS,MEDIUM,STRING,DP
+interview-preparation-kit-dynamic-programming-edit-distance,IPK Edit Distance,MEDIUM,STRING,DP
+interview-preparation-kit-dynamic-programming-maximum-subarray,IPK Max Subarray,EASY,ARRAY,SLIDING_WINDOW
+interview-preparation-kit-graph-theory-journey-to-the-moon,IPK Journey Moon,MEDIUM,GRAPH,UNION_FIND
+interview-preparation-kit-graph-theory-roads-and-libraries,IPK Roads Libraries,MEDIUM,GRAPH,UNION_FIND
+interview-preparation-kit-graph-theory-synchronous-shopping,IPK Sync Shopping,MEDIUM,GRAPH,BFS
+interview-preparation-kit-graph-theory-shortest-path,IPK Shortest Path,MEDIUM,GRAPH,SHORTEST_PATH
+interview-preparation-kit-graph-theory-bfsshortreach,IPK BFS Reach,MEDIUM,GRAPH,BFS
+interview-preparation-kit-graph-theory-dijkstrashortreach,IPK Dijkstra,HARD,GRAPH,SHORTEST_PATH
+lc-practice-0000,Practice Problem 0,HARD,ARRAY,SORTING
+lc-practice-0001,Practice Problem 1,HARD,BACKTRACKING,SORTING
+lc-practice-0002,Practice Problem 2,MEDIUM,DP,PREFIX_SUM
+lc-practice-0003,Practice Problem 3,MEDIUM,LINKED_LIST,TWO_POINTER
+lc-practice-0004,Practice Problem 4,MEDIUM,QUEUE,SHORTEST_PATH
+lc-practice-0005,Practice Problem 5,MEDIUM,STACK,PREFIX_SUM
+lc-practice-0006,Practice Problem 6,MEDIUM,LINKED_LIST,INTERVALS
+lc-practice-0007,Practice Problem 7,HARD,STACK,BFS
+lc-practice-0008,Practice Problem 8,EASY,BINARY_SEARCH,HASHING
+lc-practice-0009,Practice Problem 9,EASY,STRING,GREEDY_PATTERN
+lc-practice-0010,Practice Problem 10,HARD,DP,SHORTEST_PATH
+lc-practice-0011,Practice Problem 11,EASY,STRING,KNAPSACK
+lc-practice-0012,Practice Problem 12,EASY,GRAPH,BINARY_SEARCH_PATTERN
+lc-practice-0013,Practice Problem 13,HARD,LINKED_LIST,TOP_K
+lc-practice-0014,Practice Problem 14,HARD,LINKED_LIST,SORTING
+lc-practice-0015,Practice Problem 15,MEDIUM,HEAP,SORTING
+lc-practice-0016,Practice Problem 16,MEDIUM,GRAPH,KNAPSACK
+lc-practice-0017,Practice Problem 17,EASY,LINKED_LIST,MONOTONIC_STACK
+lc-practice-0018,Practice Problem 18,EASY,GREEDY,TOPOLOGICAL_SORT
+lc-practice-0019,Practice Problem 19,MEDIUM,HEAP,INTERVALS
