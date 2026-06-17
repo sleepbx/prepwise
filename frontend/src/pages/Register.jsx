@@ -26,7 +26,7 @@ export default function Register() {
   return (
     <AuthLayout
       title="Build interview readiness with discipline."
-      subtitle="Every problem you log becomes signal — patterns, streaks, and weak zones mapped automatically."
+      subtitle="Every problem you log becomes signal - patterns, streaks, and weak zones mapped automatically."
       footerText="Already have an account?"
       footerLink="/login"
       footerLabel="Sign in"

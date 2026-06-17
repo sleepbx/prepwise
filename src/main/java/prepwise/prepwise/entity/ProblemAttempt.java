@@ -56,4 +56,6 @@ public class ProblemAttempt {
 
     @Column(nullable = false)
     private LocalDateTime solvedAt;
+
+    private LocalDateTime lastReviewedAt;
 }

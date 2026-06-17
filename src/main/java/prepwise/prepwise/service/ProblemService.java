@@ -117,7 +117,6 @@ public class ProblemService {
             attempt.setDifficulty(meta.getDifficulty());
             attempt.setTopic(meta.getTopic());
             attempt.setPattern(meta.getPattern());
-            attemptRepository.save(attempt);
         });
         return attempt;
     }

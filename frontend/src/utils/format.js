@@ -1,17 +1,17 @@
 export const formatPattern = (pattern) => {
-  if (!pattern) return '—';
+  if (!pattern) return '-';
   return pattern.replace(/_PATTERN/g, '').split('_').map(
-    (w) => w.charAt(0) + w.slice(1).toLowerCase()
+    (word) => word.charAt(0) + word.slice(1).toLowerCase()
   ).join(' ');
 };
 
 export const formatEnum = (value) => {
-  if (!value) return '—';
-  return value.split('_').map((w) => w.charAt(0) + w.slice(1).toLowerCase()).join(' ');
+  if (!value) return '-';
+  return String(value).split('_').map((word) => word.charAt(0) + word.slice(1).toLowerCase()).join(' ');
 };
 
 export const formatDate = (iso) => {
-  if (!iso) return '—';
+  if (!iso) return '-';
   return new Date(iso).toLocaleDateString('en-US', {
     month: 'short', day: 'numeric', year: 'numeric',
   });
@@ -25,7 +25,7 @@ export const formatTime = (minutes) => {
   return m > 0 ? `${h}h ${m}m` : `${h}h`;
 };
 
-export const difficultyClass = (d) => {
-  const key = (d || 'UNKNOWN').toLowerCase();
+export const difficultyClass = (difficulty) => {
+  const key = (difficulty || 'UNKNOWN').toLowerCase();
   return `difficulty-${key}`;
 };

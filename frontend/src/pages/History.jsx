@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import api from '../api/axios';
 import { formatPattern, formatEnum, formatDate, difficultyClass } from '../utils/format';
@@ -17,7 +17,7 @@ export default function History() {
   const [difficulty, setDifficulty] = useState('');
   const [loading, setLoading] = useState(true);
 
-  const fetchAttempts = () => {
+  const fetchAttempts = useCallback(() => {
     setLoading(true);
     const params = {};
     if (search) params.search = search;
@@ -29,9 +29,14 @@ export default function History() {
     api.get('/problems', { params })
       .then((res) => setAttempts(res.data))
       .finally(() => setLoading(false));
-  };
+  }, [difficulty, pattern, platform, search, topic]);
 
-  useEffect(() => { fetchAttempts(); }, [platform, topic, pattern, difficulty]);
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      fetchAttempts();
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [fetchAttempts]);
 
   const handleSearch = (e) => {
     e.preventDefault();
