@@ -1,97 +1,39 @@
-# PrepWise — DSA Interview Analytics Platform
+# PrepWise
 
-A data-driven preparation analytics platform for software engineering interviews. PrepWise tracks your problem-solving history and surfaces intelligence about your readiness, weak spots, and highest-ROI next actions — backed by deterministic metrics, not guesswork.
+Live app: https://prepwise-mu-one.vercel.app
 
-> Built as a portfolio project targeting SDE-1 roles at Google, Amazon, Microsoft, Adobe, Meta, Uber, Stripe, and Atlassian.
+PrepWise is a DSA interview analytics platform that turns problem-solving history into a focused preparation plan. It tracks practice, measures readiness, identifies weak areas, prioritizes revision, and recommends the next highest-impact actions for software engineering interviews.
+
+Built for SDE-1 interview preparation across companies like Google, Amazon, Microsoft, Adobe, Meta, Uber, Stripe, and Atlassian.
 
 ---
 
-## What It Does
+## Why It Stands Out
 
-Most DSA prep tools tell you to "practice more." PrepWise tells you *exactly* what to practice, *why*, and *what it's worth in readiness points*.
+Most prep trackers count solved problems. PrepWise measures whether the practice is actually improving interview readiness.
 
-| Feature | What You Get |
+| Capability | What It Delivers |
 |---|---|
-| **Interview Readiness Score** | Weighted composite of coverage, consistency, revision rate, accuracy, and speed — computed in Java, not by an LLM |
-| **Weakness Analysis** | Per-topic breakdown with interview importance weights (e.g. Graphs = 80%), confidence level, estimated effort, and expected readiness gain |
-| **Revision Priorities** | Spaced repetition queue sorted by a decay-weighted formula, bucketed into Immediate / This Week / Later |
-| **Company Advisor** | Coverage gap analysis vs. topic distributions for 8 companies, with high-ROI improvement ranking |
-| **Daily Coach** | Yesterday's summary, today's highest-ROI task, streak risk warning, one measurable goal |
-| **Study Plan** | Week-by-week roadmap from your coverage gaps and interview date, with daily tasks and expected gains per week |
-| **Analytics** | Velocity trends, pattern radar, difficulty mix, hint analysis, week-over-week comparisons |
+| Interview readiness score | A weighted score based on coverage, accuracy, consistency, revision rate, speed, and difficulty mix |
+| Weakness analysis | Topic-level diagnosis with confidence, effort estimate, expected readiness gain, and recommended focus |
+| Revision priorities | Spaced repetition queue grouped into Immediate, This Week, and Later |
+| Company advisor | Gap analysis against interview patterns for supported companies |
+| Daily coach | A concise daily plan based on recent work, streak risk, and highest-ROI tasks |
+| Study plan | Week-by-week roadmap from current gaps and target interview date |
+| Analytics dashboard | Velocity, pattern radar, difficulty distribution, hint usage, and week-over-week movement |
 
 ---
 
-## AI Philosophy
+## Live Deployment
 
-The LLM is **not** responsible for intelligence. The backend is.
-
-```
-Attempts
-  ↓
-Feature Extraction  (Java — coverage, accuracy, solve time, revision rate, consistency)
-  ↓
-Metrics Engine      (Java — readiness score, weakness index, revision priority)
-  ↓
-Rule Engine         (Java — classifications, recommendations, gap analysis)
-  ↓
-Compact DTO         (~50 tokens of structured metrics, not raw history)
-  ↓
-LLM Explanation     (Groq / Gemini — turns numbers into readable prose)
-  ↓
-Frontend
-```
-
-All statistics and recommendations are computed deterministically in Java first. The LLM receives a compact summary and turns it into readable prose. If both providers are unavailable or the free-tier budget is exhausted, rule-based insights still deliver real value.
-
----
-
-## Tech Stack
-
-| Layer | Technology |
+| Service | URL |
 |---|---|
-| Backend | Spring Boot 3.5.3, Java 21, Spring Security (JWT), JPA, SQLite, Lombok |
-| AI | Groq `llama-3.1-8b-instant` (primary) + Google Gemini `gemini-2.0-flash-001` (fallback) |
-| Frontend | React 19, Vite, Tailwind CSS 4, Recharts, Framer Motion, React Router 7 |
-| Build | Maven Wrapper, npm |
+| Frontend | https://prepwise-mu-one.vercel.app |
+| Backend API | https://prepwise-7zvd.onrender.com |
 
----
+The frontend is deployed on Vercel. API requests under `/api/*` are proxied to the Render backend using `frontend/vercel.json`.
 
-## Getting Started
-
-### Prerequisites
-
-- Java 21+
-- Node.js 18+
-- A free [Groq API key](https://console.groq.com) — optional, rule-based fallback works without it
-
-### 1. Backend
-
-```bash
-git clone https://github.com/your-username/prepwise.git
-cd prepwise
-
-# Set up local config (gitignored)
-cp src/main/resources/application-local.properties.example \
-   src/main/resources/application-local.properties
-
-# Add your GROQ_API_KEY to application-local.properties, then:
-./mvnw spring-boot:run
-# → http://localhost:8080
-```
-
-### 2. Frontend
-
-```bash
-cd frontend
-npm install
-npm run dev
-# → http://localhost:5173
-```
-
-### 3. Demo Account
-
-A demo account with realistic seed data is created automatically on startup.
+Demo account:
 
 | Email | Password |
 |---|---|
@@ -99,136 +41,268 @@ A demo account with realistic seed data is created automatically on startup.
 
 ---
 
-## AI Provider Configuration
+## Product Architecture
 
-`src/main/resources/application-local.properties`:
+PrepWise separates intelligence from explanation. The backend computes the actual metrics first; language models only turn those metrics into readable guidance.
+
+```text
+Problem Attempts
+  -> Feature Extraction
+  -> Metrics Engine
+  -> Rule Engine
+  -> Compact Insight DTO
+  -> LLM Explanation
+  -> React Dashboard
+```
+
+This keeps recommendations grounded in deterministic data. If external model providers are unavailable, the app still produces useful rule-based insights.
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | React 19, Vite, Tailwind CSS 4, Recharts, Framer Motion, React Router 7 |
+| Backend | Spring Boot 3.5.3, Java 21, Spring Security, JWT, Spring Data JPA |
+| Database | SQLite |
+| Intelligence | Deterministic Java scoring plus Groq and Gemini explanations |
+| Deployment | Vercel frontend, Render Docker backend |
+| Build tools | Maven Wrapper, npm |
+
+---
+
+## Core Features
+
+### Readiness Score
+
+A composite score built from practical interview signals:
+
+- Topic coverage
+- Accuracy
+- Consistency
+- Revision quality
+- Time efficiency
+- Difficulty distribution
+
+### Weakness Analysis
+
+Ranks weak zones by combining performance data with interview importance. A low-coverage high-value topic, such as Graphs or Dynamic Programming, gets prioritized over low-impact gaps.
+
+### Revision System
+
+Uses spaced repetition intervals and decay-weighted scoring to keep old solves from going stale.
+
+### Company Advisor
+
+Compares the user's preparation profile against company-specific topic weights and recommends the best next improvements.
+
+### Daily Coach
+
+Summarizes yesterday, chooses today's highest-ROI task, warns about streak risk, and gives one measurable goal.
+
+---
+
+## Getting Started Locally
+
+### Prerequisites
+
+- Java 21+
+- Node.js 18+
+- Optional Groq or Gemini API key for model-backed explanations
+
+### Backend
+
+```bash
+git clone https://github.com/sleepbx/prepwise.git
+cd prepwise
+
+cp src/main/resources/application-local.properties.example \
+   src/main/resources/application-local.properties
+
+./mvnw spring-boot:run
+```
+
+Backend runs at:
+
+```text
+http://localhost:8080
+```
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Frontend runs at:
+
+```text
+http://localhost:5173
+```
+
+During local development, Vite proxies `/api` to `http://localhost:8080`.
+
+---
+
+## Configuration
+
+Local secrets belong in:
+
+```text
+src/main/resources/application-local.properties
+```
+
+Example:
 
 ```properties
-# Provider: groq (default) or gemini
-LLM_MODE=groq
-GROQ_API_KEY=your_key_here
+PREPWISE_AI_ENABLED=true
 
-# Switch to Gemini as primary, Groq as fallback
-# LLM_MODE=gemini
-# GEMINI_API_KEY=your_key_here
+GROQ_API_KEY=your_groq_key_here
+GROQ_MODEL=llama-3.1-8b-instant
+GROQ_ALLOW_AUTO_INSIGHTS=true
 
-# Free-tier guardrails — deterministic fallback kicks in when reached
+GEMINI_API_KEY=your_gemini_key_here
+GEMINI_MODEL=gemini-2.0-flash-001
+
 AI_TOKEN_BUDGET_PER_MINUTE=4000
 AI_REQUEST_BUDGET_PER_MINUTE=4
 AI_MAX_OUTPUT_TOKENS=160
 ```
 
-**Fallback chain:** Groq → Gemini → Rule-based insights. The application never fails because a provider is unavailable.
+The app falls back to deterministic rule-based insights when provider keys are missing or budgets are exhausted.
 
 ---
 
-## Supported Companies
-
-Google · Amazon · Microsoft · Adobe · Meta · Uber · Stripe · Atlassian
-
-Each company has a weighted topic distribution used by the Company Advisor and Study Plan.
-
----
-
-## API Reference
+## API Overview
 
 ### Authentication
 
 | Method | Path | Description |
 |---|---|---|
-| POST | `/api/auth/register` | Create account |
-| POST | `/api/auth/login` | Login, returns JWT |
+| POST | `/api/auth/register` | Create a user account |
+| POST | `/api/auth/login` | Login and receive a JWT |
 
-All other endpoints require `Authorization: Bearer <token>`.
+All other protected endpoints require:
 
-### AI
+```text
+Authorization: Bearer <token>
+```
+
+### Intelligence
 
 | Method | Path | Description |
 |---|---|---|
-| GET | `/api/ai/readiness` | Interview readiness score with breakdown |
-| GET | `/api/ai/weakness-analysis` | Per-topic weakness index and recommendations |
+| GET | `/api/ai/readiness` | Readiness score and breakdown |
+| GET | `/api/ai/weakness-analysis` | Topic weakness diagnosis |
 | GET | `/api/ai/revision-priorities` | Spaced revision queue |
-| GET | `/api/ai/insights` | Week-over-week analytics |
+| GET | `/api/ai/insights` | Analytics insights |
 | GET | `/api/ai/daily-coach` | Daily coaching briefing |
-| POST | `/api/ai/company-advisor` | Gap analysis for a target company |
-| POST | `/api/ai/study-plan` | Generate weekly study plan |
-| GET | `/api/ai/companies` | List of supported companies |
+| POST | `/api/ai/company-advisor` | Company-specific gap analysis |
+| POST | `/api/ai/study-plan` | Interview study plan |
+| GET | `/api/ai/companies` | Supported companies |
 
-### Core
+### Practice And Analytics
 
 | Method | Path | Description |
 |---|---|---|
 | POST | `/api/problems` | Log a problem attempt |
-| GET | `/api/problems/resolve?url=` | Auto-detect problem metadata from URL |
-| GET | `/api/analytics/dashboard` | Dashboard stats |
+| GET | `/api/problems/resolve?url=` | Resolve problem metadata from URL |
+| GET | `/api/analytics/dashboard` | Dashboard summary |
 | GET | `/api/analytics/velocity` | Daily solve velocity |
 | GET | `/api/analytics/radar` | Pattern radar data |
-| GET | `/api/practice/question-of-day` | Today's recommended problem |
+| GET | `/api/practice/question-of-day` | Recommended daily problem |
 | GET | `/api/practice/review-queue` | Revision queue |
 
 ---
 
 ## Project Structure
 
-```
+```text
 prepwise/
-├── src/main/java/prepwise/prepwise/
-│   ├── entity/           # User, ProblemAttempt, Streak, enums (Topic, Pattern, Difficulty, Platform)
-│   ├── controller/       # Auth, Problems, Analytics, Practice, Achievements, Profile
-│   ├── service/          # Business logic, StreakService, MetadataLoader, UrlParserService
-│   ├── repository/       # Spring Data JPA repositories
-│   ├── dto/              # Request/response objects
-│   ├── security/         # JwtService, JwtAuthFilter, SecurityConfig
-│   ├── config/           # DemoDataSeeder
-│   └── ai/
-│       ├── intelligence/ # AnalyticsFeatureExtractor, UserAnalyticsSnapshot, TopicMetrics
-│       ├── llm/          # GroqClient, GeminiClient, LLMService, AiPrompts
-│       ├── service/      # ReadinessService, WeaknessAnalysisService, CompanyAdvisorService, etc.
-│       ├── dto/          # AI-specific response objects
-│       ├── util/         # IntelligenceScoring, CompanyPatternWeights
-│       └── controller/   # AiController, AiExceptionHandler
-├── src/main/resources/
-│   ├── application.properties
-│   ├── application-local.properties.example
-│   └── datasets/         # leetcode.csv, blind_75.csv, neetcode_150.csv, striver_a2z.csv, etc.
-└── frontend/
-    └── src/
-        ├── pages/        # Dashboard, Analytics, Practice, AI, History, Profile
-        ├── components/   # Layout, Sidebar, CountUp
-        ├── context/      # AuthContext
-        └── api/          # Axios client with JWT interceptor
+  src/main/java/prepwise/prepwise/
+    ai/
+      controller/       AI endpoints
+      dto/              AI response objects
+      intelligence/     Feature extraction and analytics snapshots
+      llm/              Groq, Gemini, and prompt orchestration
+      service/          Readiness, weakness, study plan, advisor, coaching
+      util/             Scoring utilities and company weights
+    config/             Seed data and web configuration
+    controller/         Auth, problems, analytics, practice, profile
+    dto/                Request and response objects
+    entity/             User, attempts, streaks, enums
+    repository/         Spring Data repositories
+    security/           JWT and Spring Security
+    service/            Core business logic
+  src/main/resources/
+    application.properties
+    application-local.properties.example
+    datasets/
+  frontend/
+    src/
+      api/
+      components/
+      context/
+      pages/
 ```
 
 ---
 
-## Configuration Reference
+## Deployment Notes
 
-| Property | Default | Description |
-|---|---|---|
-| `prepwise.ai.enabled` | `true` | Enable LLM explanations |
-| `prepwise.ai.provider` | `groq` | Primary provider (`groq` or `gemini`) |
-| `prepwise.ai.token-budget-per-minute` | `4000` | Free-tier token guardrail |
-| `prepwise.ai.request-budget-per-minute` | `4` | Free-tier request guardrail |
-| `prepwise.ai.max-output-tokens` | `160` | Max tokens per LLM response |
-| `prepwise.seed.demo` | `true` | Seed demo account on startup |
+### Vercel
+
+The frontend is deployed from `frontend/`.
+
+Recommended Vercel settings:
+
+| Setting | Value |
+|---|---|
+| Framework | Vite |
+| Root directory | `frontend` |
+| Build command | `npm run build` |
+| Output directory | `dist` |
+
+The API rewrite is defined in:
+
+```text
+frontend/vercel.json
+```
+
+### Render
+
+The backend is deployed as a Docker web service from the `deploy` branch.
+
+Important Render environment variables:
+
+| Variable | Purpose |
+|---|---|
+| `GROQ_API_KEY` | Groq model access |
+| `GEMINI_API_KEY` | Gemini fallback access |
+| `JWT_SECRET` | JWT signing secret |
+| `PREPWISE_AI_ENABLED` | Enable or disable model-backed explanations |
+| `AI_TOKEN_BUDGET_PER_MINUTE` | Free-tier token guardrail |
+| `AI_REQUEST_BUDGET_PER_MINUTE` | Free-tier request guardrail |
+| `AI_MAX_OUTPUT_TOKENS` | Maximum response length |
+
+SQLite is used for simple deployment. On free Render instances, filesystem data can be ephemeral unless a persistent disk is configured.
 
 ---
 
-## Deployment
+## Verification
 
-The `deploy` branch is ready for one-click deployment on [Render](https://render.com) (free tier, Docker runtime):
+Current production checks:
 
-1. Push the `deploy` branch to GitHub
-2. In Render → New Web Service → connect your GitHub repo → select `deploy` branch
-3. Render auto-detects the `Dockerfile` and `render.yaml`
-4. Set these environment variables in Render's dashboard:
-   - `GROQ_API_KEY` — from [console.groq.com](https://console.groq.com)
-   - `GEMINI_API_KEY` — from [aistudio.google.com](https://aistudio.google.com)
-   - `JWT_SECRET` — Render auto-generates this (defined in render.yaml)
+```text
+GET  https://prepwise-mu-one.vercel.app
+POST https://prepwise-mu-one.vercel.app/api/auth/login
+GET  https://prepwise-7zvd.onrender.com/index.html
+```
 
-That's it. Frontend and backend are served from the same URL.
-
-**Note on cold starts:** Render free tier spins down after 15 minutes of inactivity. First request after sleep takes ~30 seconds. Acceptable for a portfolio demo; upgrade to the $7/month plan to eliminate this.
+The Vercel login request routes through Render and returns a JWT for the demo account.
 
 ---
 
