@@ -50,7 +50,7 @@ All statistics and recommendations are computed deterministically in Java first.
 
 | Layer | Technology |
 |---|---|
-| Backend | Spring Boot 3.5.3, Java 21, Spring Security (JWT), JPA, H2, Lombok |
+| Backend | Spring Boot 3.5.3, Java 21, Spring Security (JWT), JPA, SQLite, Lombok |
 | AI | Groq `llama-3.1-8b-instant` (primary) + Google Gemini `gemini-2.0-flash-001` (fallback) |
 | Frontend | React 19, Vite, Tailwind CSS 4, Recharts, Framer Motion, React Router 7 |
 | Build | Maven Wrapper, npm |
@@ -211,6 +211,24 @@ prepwise/
 | `prepwise.ai.request-budget-per-minute` | `4` | Free-tier request guardrail |
 | `prepwise.ai.max-output-tokens` | `160` | Max tokens per LLM response |
 | `prepwise.seed.demo` | `true` | Seed demo account on startup |
+
+---
+
+## Deployment
+
+The `deploy` branch is ready for one-click deployment on [Render](https://render.com) (free tier, Docker runtime):
+
+1. Push the `deploy` branch to GitHub
+2. In Render → New Web Service → connect your GitHub repo → select `deploy` branch
+3. Render auto-detects the `Dockerfile` and `render.yaml`
+4. Set these environment variables in Render's dashboard:
+   - `GROQ_API_KEY` — from [console.groq.com](https://console.groq.com)
+   - `GEMINI_API_KEY` — from [aistudio.google.com](https://aistudio.google.com)
+   - `JWT_SECRET` — Render auto-generates this (defined in render.yaml)
+
+That's it. Frontend and backend are served from the same URL.
+
+**Note on cold starts:** Render free tier spins down after 15 minutes of inactivity. First request after sleep takes ~30 seconds. Acceptable for a portfolio demo; upgrade to the $7/month plan to eliminate this.
 
 ---
 
