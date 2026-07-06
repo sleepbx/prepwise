@@ -43,3 +43,6 @@ application-local.properties
 *.db
 *.db-shm
 *.db-wal
+
+### Vercel ###
+.vercel/
