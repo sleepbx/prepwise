@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import prepwise.prepwise.ai.dto.RevisionPriorityDto;
 import prepwise.prepwise.ai.intelligence.AnalyticsFeatureExtractor;
+import prepwise.prepwise.ai.util.IntelligenceScoring;
 import prepwise.prepwise.entity.ProblemAttempt;
 import prepwise.prepwise.entity.User;
 import prepwise.prepwise.service.CurrentUserService;
@@ -32,20 +33,28 @@ public class RevisionPriorityService {
                         .priority(s.priorityLevel())
                         .priorityScore(s.priorityScore())
                         .reason(buildReason(s))
+                        .urgencyCategory(IntelligenceScoring.urgencyCategory(s.priorityScore(), s.daysSinceSolved()))
+                        .difficulty(s.difficulty().name())
+                        .daysSinceSolved(s.daysSinceSolved())
+                        .revisionCount(s.revisionCount())
+                        .confidence(s.hintUsed() ? "LOW" : s.revisionCount() > 2 ? "HIGH" : "MEDIUM")
                         .build())
                 .toList();
     }
 
     private String buildReason(AnalyticsFeatureExtractor.ProblemRevisionStats s) {
         if (s.revisionCount() == 0 && s.daysSinceSolved() > 14) {
-            return "Never revised after " + s.daysSinceSolved() + " days.";
+            return "Never revised — " + s.daysSinceSolved() + " days since first solve. Retention likely low.";
         }
         if (s.hintUsed() && s.timeSpentMinutes() > 40) {
-            return "Long solve time with hint dependency.";
+            return "Solved with hint in " + s.timeSpentMinutes() + "m — indicates understanding gap, not just time pressure.";
+        }
+        if (s.hintUsed()) {
+            return "Hint was used during solve — revisit to confirm independent understanding.";
         }
         if (s.daysSinceSolved() > 7) {
-            return "Due for spaced repetition (" + s.daysSinceSolved() + " days ago).";
+            return "Spaced repetition due — last solved " + s.daysSinceSolved() + " days ago.";
         }
-        return "Moderate revision priority based on recency and difficulty.";
+        return "Low-priority maintenance revision based on recency and difficulty.";
     }
 }

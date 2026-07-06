@@ -51,9 +51,18 @@ public class AnalyticsInsightService {
                 "activeDaysDiff", last7ActiveDays - prev7ActiveDays
         );
 
+        int solvedDiff = imp.getProblemsSolvedDiff();
+        int activeDiff = last7ActiveDays - prev7ActiveDays;
+        String trend = deriveTrend(solvedDiff, activeDiff);
+        String biggestWin = deriveBiggestWin(imp, last7ActiveDays, prev7ActiveDays);
+        String biggestRisk = deriveBiggestRisk(imp, last7ActiveDays, prev7ActiveDays);
+
         return AnalyticsInsightResponse.builder()
                 .changes(changes)
                 .insight(llmService.generateAnalyticsInsight(summary))
+                .trend(trend)
+                .biggestWin(biggestWin)
+                .biggestRisk(biggestRisk)
                 .build();
     }
 
@@ -63,5 +72,31 @@ public class AnalyticsInsightService {
                 .filter(d -> !d.isBefore(start) && !d.isAfter(end))
                 .collect(Collectors.toSet());
         return days.size();
+    }
+
+    private String deriveTrend(int solvedDiff, int activeDiff) {
+        if (solvedDiff > 2 || activeDiff > 1) return "IMPROVING";
+        if (solvedDiff < -2 || activeDiff < -2) return "DECLINING";
+        return "STABLE";
+    }
+
+    private String deriveBiggestWin(ImprovementDto imp, int last7Active, int prev7Active) {
+        if (imp.getProblemsSolvedDiff() > 3)
+            return "Solved " + imp.getProblemsSolvedDiff() + " more problems than last week";
+        if (last7Active > prev7Active)
+            return "Active " + (last7Active - prev7Active) + " more day(s) than last week";
+        if (imp.getAvgSolveTimeDiff() < -5)
+            return "Avg solve time improved by " + Math.abs((int) imp.getAvgSolveTimeDiff()) + " minutes";
+        return "Maintained preparation consistency";
+    }
+
+    private String deriveBiggestRisk(ImprovementDto imp, int last7Active, int prev7Active) {
+        if (imp.getProblemsSolvedDiff() < -3)
+            return "Problem volume dropped by " + Math.abs(imp.getProblemsSolvedDiff()) + " vs. last week";
+        if (last7Active < prev7Active - 2)
+            return "Active days dropped by " + (prev7Active - last7Active) + " — consistency at risk";
+        if (imp.getHintUsageDiff() > 15)
+            return "Hint usage increased by " + (int) imp.getHintUsageDiff() + "% — accuracy may be declining";
+        return null;
     }
 }

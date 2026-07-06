@@ -15,4 +15,10 @@ public class ReadinessResponse {
     private List<String> keyStrengths;
     private List<String> improvementAreas;
     private String explanation;
+
+    // Enriched fields
+    private String hiringRisk;       // LOW | MEDIUM | HIGH
+    private String expectedOutcome;  // e.g., "Phone Screen Ready"
+    private int blind75Solved;
+    private int currentStreak;
 }

@@ -23,5 +23,10 @@ public class StudyPlanResponse {
         private List<String> focusTopics;
         private int problemsPerDay;
         private int estimatedHours;
+
+        // Enriched fields
+        private String focusReason;           // why this topic this week
+        private double expectedReadinessGain; // estimated readiness score delta
+        private List<String> dailyTasks;      // concrete daily actions
     }
 }

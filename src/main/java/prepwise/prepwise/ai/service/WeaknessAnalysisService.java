@@ -14,7 +14,9 @@ import prepwise.prepwise.entity.User;
 import prepwise.prepwise.service.CurrentUserService;
 import prepwise.prepwise.service.ProblemService;
 
+import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,8 +37,15 @@ public class WeaknessAnalysisService {
 
         for (TopicMetrics m : snapshot.topicMetrics().values()) {
             if (m.solvedCount() == 0 && m.topic() != Topic.ARRAY) continue;
+
             String classification = IntelligenceScoring.weaknessClassification(m.weaknessIndex());
-            String recommendation = buildRecommendation(m, classification);
+            int importance = IntelligenceScoring.topicImportance(m.topic());
+            String confidence = IntelligenceScoring.confidenceLevel(m.coverage(), m.accuracy());
+            String effort = IntelligenceScoring.estimatedEffort(classification, m.label());
+            double impactPoints = IntelligenceScoring.round1(m.weaknessIndex() * importance / 2500.0 * 10);
+            String readinessImpact = "+" + impactPoints + " points if addressed";
+            String trend = computeTrend(m.topic(), attempts);
+
             if ("WEAK".equals(classification)) weakTopics.add(m.label());
 
             results.add(WeaknessAnalysisDto.builder()
@@ -49,28 +58,66 @@ public class WeaknessAnalysisService {
                     .consistencyScore(m.consistencyScore())
                     .weaknessIndex(m.weaknessIndex())
                     .classification(classification)
-                    .recommendation(recommendation)
+                    .recommendation(buildRecommendation(m, classification))
+                    .interviewImportance(importance)
+                    .confidence(confidence)
+                    .estimatedEffort(effort)
+                    .readinessImpact(readinessImpact)
+                    .recentTrend(trend)
                     .build());
         }
         results.sort(Comparator.comparingDouble(WeaknessAnalysisDto::getWeaknessIndex).reversed());
 
-        Map<String, Object> summary = Map.of(
-                "weakTopics", weakTopics.stream().limit(5).toList(),
-                "topWeakness", results.isEmpty() ? "None" : results.get(0).getTopic(),
-                "readinessHint", snapshot.consistencyScore()
-        );
-        String explanation = llmService.generateWeaknessExplanation(summary);
         if (!results.isEmpty()) {
-            results.get(0).setRecommendation(explanation);
+            WeaknessAnalysisDto top = results.get(0);
+            Map<String, Object> summary = new LinkedHashMap<>();
+            summary.put("topWeakness", top.getTopic());
+            summary.put("coverage", top.getCoverage());
+            summary.put("accuracy", top.getAccuracy());
+            summary.put("avgSolveTime", top.getAverageSolveTime());
+            summary.put("hintRate", top.getHintUsageRate());
+            summary.put("interviewImportance", top.getInterviewImportance());
+            summary.put("weaknessIndex", top.getWeaknessIndex());
+            summary.put("weakTopics", weakTopics.stream().limit(5).toList());
+            top.setRecommendation(llmService.generateWeaknessExplanation(summary));
         }
         return results;
     }
 
     private String buildRecommendation(TopicMetrics m, String classification) {
         return switch (classification) {
-            case "STRONG" -> "Maintain with 1 revision problem per week.";
-            case "MODERATE" -> "Solve 2 fresh mediums in " + m.label() + " without hints.";
-            default -> "Priority focus: 3 problems/day in " + m.label() + ", then spaced revision.";
+            case "STRONG" -> m.label() + " coverage at " + (int) m.coverage() + "%. Maintain with 1 revision problem per week.";
+            case "MODERATE" -> {
+                String timeNote = m.averageSolveTime() > 35
+                        ? " Avg solve time " + (int) m.averageSolveTime() + "m — focus on pattern recognition first."
+                        : "";
+                yield m.label() + " coverage at " + (int) m.coverage() + "%, accuracy " + (int) m.accuracy()
+                      + "%. Solve 2–3 mediums without hints this week." + timeNote;
+            }
+            default -> {
+                String timeNote = m.averageSolveTime() > 40
+                        ? " Avg " + (int) m.averageSolveTime() + "m per problem indicates concept gaps, not practice volume — study patterns before grinding."
+                        : " Solve 3 problems/day with no hints, then revise within 48 hours.";
+                yield m.label() + " coverage is " + (int) m.coverage()
+                      + "% — this is your highest readiness drag." + timeNote;
+            }
         };
+    }
+
+    private String computeTrend(Topic topic, List<ProblemAttempt> attempts) {
+        LocalDate cutoff = LocalDate.now().minusDays(14);
+        LocalDate prevCutoff = LocalDate.now().minusDays(28);
+        long recent = attempts.stream()
+                .filter(a -> a.getTopic() == topic)
+                .filter(a -> !a.getSolvedAt().toLocalDate().isBefore(cutoff))
+                .count();
+        long previous = attempts.stream()
+                .filter(a -> a.getTopic() == topic)
+                .filter(a -> a.getSolvedAt().toLocalDate().isBefore(cutoff)
+                        && !a.getSolvedAt().toLocalDate().isBefore(prevCutoff))
+                .count();
+        if (recent > previous + 1) return "IMPROVING";
+        if (recent < previous - 1) return "DECLINING";
+        return "STABLE";
     }
 }

@@ -50,31 +50,33 @@ public class LLMService {
         this.maxOutputTokens = Math.max(80, maxOutputTokens);
     }
 
+    // Groq (llama-3.1-8b-instant): fast responses, 14 400 req/day free — used for short/interactive features
+    // Gemini (gemini-2.0-flash-001): better reasoning, 1 500 req/day free — used for complex multi-topic analysis
     public String generateStudyPlanExplanation(Map<String, Object> summary) {
-        return explain(AiPrompts.studyPlan(toCompactJson(summary)), fallbackStudyPlan(summary), false);
+        return explain(AiPrompts.studyPlan(toCompactJson(summary)), fallbackStudyPlan(summary), false, "gemini");
     }
 
     public String generateWeaknessExplanation(Map<String, Object> summary) {
-        return explain(AiPrompts.weakness(toCompactJson(summary)), fallbackWeakness(summary), true);
+        return explain(AiPrompts.weakness(toCompactJson(summary)), fallbackWeakness(summary), true, "gemini");
     }
 
     public String generateReadinessExplanation(Map<String, Object> summary) {
-        return explain(AiPrompts.readiness(toCompactJson(summary)), fallbackReadiness(summary), true);
+        return explain(AiPrompts.readiness(toCompactJson(summary)), fallbackReadiness(summary), true, "groq");
     }
 
     public String generateCompanyAdvice(Map<String, Object> summary) {
-        return explain(AiPrompts.companyAdvice(toCompactJson(summary)), fallbackCompany(summary), false);
+        return explain(AiPrompts.companyAdvice(toCompactJson(summary)), fallbackCompany(summary), false, "gemini");
     }
 
     public String generateAnalyticsInsight(Map<String, Object> summary) {
-        return explain(AiPrompts.analyticsInsight(toCompactJson(summary)), fallbackAnalytics(summary), true);
+        return explain(AiPrompts.analyticsInsight(toCompactJson(summary)), fallbackAnalytics(summary), true, "groq");
     }
 
     public String generateDailyCoachMessage(Map<String, Object> summary) {
-        return explain(AiPrompts.dailyCoach(toCompactJson(summary)), fallbackCoach(summary), true);
+        return explain(AiPrompts.dailyCoach(toCompactJson(summary)), fallbackCoach(summary), true, "groq");
     }
 
-    private String explain(String userPrompt, String fallback, boolean automaticInsight) {
+    private String explain(String userPrompt, String fallback, boolean automaticInsight, String featureProvider) {
         String cacheKey = (automaticInsight ? "auto:" : "explicit:") + userPrompt;
         CachedAnswer cached = cache.get(cacheKey);
         if (cached != null && !cached.isExpired()) {
@@ -88,7 +90,7 @@ public class LLMService {
             return fallback;
         }
 
-        String response = callPreferredProvider(userPrompt, automaticInsight);
+        String response = callWithProvider(featureProvider, userPrompt, automaticInsight);
         if (response != null && !response.isBlank()) {
             String answer = response.trim();
             cache.put(cacheKey, new CachedAnswer(answer, Instant.now().plus(Duration.ofMinutes(10))));
@@ -97,12 +99,26 @@ public class LLMService {
         return fallback;
     }
 
-    private String callPreferredProvider(String userPrompt, boolean automaticInsight) {
-        if ("groq".equals(preferredProvider)) {
-            return callGroq(userPrompt, automaticInsight);
-        }
-        String gemini = callGemini(userPrompt);
-        return gemini != null ? gemini : callGroq(userPrompt, automaticInsight);
+    private String callWithProvider(String provider, String userPrompt, boolean automaticInsight) {
+        return switch (provider) {
+            case "groq" -> {
+                String r = callGroq(userPrompt, automaticInsight);
+                yield r != null ? r : callGemini(userPrompt);
+            }
+            case "gemini" -> {
+                String r = callGemini(userPrompt);
+                yield r != null ? r : callGroq(userPrompt, automaticInsight);
+            }
+            default -> {
+                // respect global preference if no feature override matched
+                if ("groq".equals(preferredProvider)) {
+                    String r = callGroq(userPrompt, automaticInsight);
+                    yield r != null ? r : callGemini(userPrompt);
+                }
+                String r = callGemini(userPrompt);
+                yield r != null ? r : callGroq(userPrompt, automaticInsight);
+            }
+        };
     }
 
     private String callGemini(String userPrompt) {
@@ -149,52 +165,81 @@ public class LLMService {
 
     @SuppressWarnings("unchecked")
     private String fallbackStudyPlan(Map<String, Object> s) {
-        var weeks = (java.util.List<Map<String, Object>>) s.getOrDefault("weeks", java.util.List.of());
-        var gaps = (java.util.List<String>) s.getOrDefault("priorityTopics", java.util.List.of());
-        return "You have " + s.get("daysRemaining") + " days and about " + s.get("totalHours") + " hours available. " +
-               "Prioritize " + String.join(", ", gaps) + " based on company weight versus your coverage gaps. " +
-               "Follow the " + weeks.size() + "-week structure with " + s.get("hoursPerDay") + "h/day: " +
-               "front-load weak areas, then mix revision in the final weeks.";
+        var topics = (java.util.List<?>) s.getOrDefault("priorityTopics", java.util.List.of());
+        int days = Integer.parseInt(s.getOrDefault("daysRemaining", 30).toString());
+        int hours = Integer.parseInt(s.getOrDefault("totalHours", 0).toString());
+        String topStr = topics.isEmpty() ? "the highest-gap topics" : topics.stream().limit(3)
+                .map(Object::toString).collect(java.util.stream.Collectors.joining(", "));
+        return days + " days and " + hours + " hours available. " +
+               "Coverage gaps in " + topStr + " are the highest-ROI targets based on your current metrics vs. company distribution. " +
+               "Front-load the weakest topics in the first 60% of time, then shift to revision and timed practice in the final weeks. " +
+               "Solve problems without hints; use hint-free accuracy as the primary quality signal.";
     }
 
     @SuppressWarnings("unchecked")
     private String fallbackWeakness(Map<String, Object> s) {
-        var weak = (java.util.List<String>) s.getOrDefault("weakTopics", java.util.List.of());
-        String topicText = weak.isEmpty() ? "your least practiced topics" : String.join(", ", weak);
-        return "Your weakest areas are " + topicText + ". " +
-               "Low coverage, slow solves, hint usage, revision gaps, and consistency drive the index. " +
-               "Solve 2 medium problems per weak topic this week without hints, then re-attempt one old problem within 48 hours.";
+        String topWeakness = s.getOrDefault("topWeakness", "the top weak topic").toString();
+        Object coverage = s.getOrDefault("coverage", "low");
+        Object importance = s.getOrDefault("interviewImportance", "high");
+        Object avgTime = s.getOrDefault("avgSolveTime", 0);
+        return topWeakness + " coverage at " + coverage + "% with " + importance + "% interview importance is your highest-priority gap. " +
+               "Average solve time of " + avgTime + "m suggests concept gaps rather than speed issues — study pattern templates before grinding volume. " +
+               "Solve 2 medium problems per day in this topic without hints, then revise one older problem within 48 hours to build retention.";
     }
 
     private String fallbackReadiness(Map<String, Object> s) {
-        return "Readiness score is " + s.get("score") + " (" + s.get("level") + "). " +
-               "Coverage and consistency are your main levers. " +
-               "Maintain your streak, close Blind 75 gaps, and revise 3 high-priority problems before adding new ones.";
+        double score = Double.parseDouble(s.getOrDefault("score", 0).toString());
+        String level = s.getOrDefault("level", "ON_TRACK").toString();
+        String outcome = s.getOrDefault("expectedOutcome", "Phone Screen Ready").toString();
+        String risk = s.getOrDefault("hiringRisk", "MEDIUM").toString();
+        return "Readiness score: " + score + " — " + level.replace("_", " ") + ". Expected outcome: " + outcome + ". Hiring risk: " + risk + ". " +
+               "Coverage and consistency are the two highest-weight components in the score — both compound over time. " +
+               "Prioritize daily active sessions over session length, close Blind 75 gaps systematically, and revise 2–3 high-priority problems per session. " +
+               "A 10-point gain in consistency alone typically adds 2.5 readiness points.";
     }
 
     @SuppressWarnings("unchecked")
     private String fallbackCompany(Map<String, Object> s) {
-        var areas = (java.util.List<String>) s.getOrDefault("focusAreas", java.util.List.of());
-        String areaText = areas.isEmpty() ? "the recommended focus areas" : String.join(" and ", areas);
-        return areaText + " align with " + s.get("company") + "'s interview distribution. " +
-               "Allocate study time proportionally and drill pattern templates, not random problem volume.";
+        String company = s.getOrDefault("company", "this company").toString();
+        var topGaps = (java.util.List<Map<String, Object>>) s.getOrDefault("topGaps", java.util.List.of());
+        if (topGaps.isEmpty()) {
+            return "Focus on your coverage gaps relative to " + company + "'s interview distribution. " +
+                   "Drill pattern templates rather than accumulating problem volume. " +
+                   "Spaced revision of solved problems improves retention and reduces interview-day memory gaps.";
+        }
+        var first = topGaps.get(0);
+        int gap = Integer.parseInt(first.getOrDefault("gap", 0).toString());
+        String topic = first.getOrDefault("topic", "the top gap topic").toString();
+        return topic + " has a " + gap + "% coverage gap vs. " + company + "'s expected distribution — this is your highest-ROI improvement. " +
+               "Solving 10–15 focused problems in this area is estimated to close the gap within 2 weeks. " +
+               "Avoid spending additional time on topics already at or above expected coverage; redirect that effort to gaps. " +
+               "Prioritize patterns, not platforms.";
     }
 
     private String fallbackAnalytics(Map<String, Object> s) {
         int solvedDiff = Integer.parseInt(s.getOrDefault("problemsSolvedDiff", 0).toString());
-        return "Problems solved changed by " + solvedDiff + " versus the previous week. " +
-               "Solve time moved " + s.get("avgSolveTimeDiff") + " minutes and active days changed by " +
-               s.getOrDefault("activeDaysDiff", 0) + ". " +
-               (solvedDiff < 0
-                       ? "Volume dropped; protect consistency even with fewer problems."
-                       : "Good momentum; keep difficulty balanced with revision.");
+        int activeDiff = Integer.parseInt(s.getOrDefault("activeDaysDiff", 0).toString());
+        Object last7 = s.getOrDefault("last7Problems", 0);
+        String direction = solvedDiff > 0 ? "up " + solvedDiff : solvedDiff < 0 ? "down " + Math.abs(solvedDiff) : "flat";
+        return "Problem volume " + direction + " vs. last week. Active days changed by " + activeDiff + ". " +
+               (solvedDiff < -2 ? "Volume dropped significantly — investigate whether this reflects reduced time or increased difficulty. Protect streak." :
+                solvedDiff < 0  ? "Slight volume dip — ensure difficulty is not regressing. Keep revision rate steady." :
+                solvedDiff > 3  ? "Strong volume increase (" + last7 + " problems this week). Verify accuracy is holding — volume without retention is low ROI." :
+                                  "Volume is stable. Focus on accuracy and revision rate as the next quality lever.") +
+               " Hint usage and solve time are equally important signals — track them alongside problem count.";
     }
 
     @SuppressWarnings("unchecked")
     private String fallbackCoach(Map<String, Object> s) {
-        return (String) s.getOrDefault("headline", "Stay consistent today.") + " " +
-               "Streak: " + s.get("currentStreak") + " days. Readiness: " + s.get("readinessScore") + ". " +
-               "Complete today's revision queue before picking new problems.";
+        String company = s.getOrDefault("company", "your target company").toString();
+        Object streak = s.getOrDefault("currentStreak", 0);
+        Object readiness = s.getOrDefault("readinessScore", 0);
+        String weakTopic = s.getOrDefault("weakTopic", "the weakest topic").toString();
+        int importance = Integer.parseInt(s.getOrDefault("topicImportance", 80).toString());
+        return "Streak at " + streak + " days. Readiness: " + readiness + ". " +
+               weakTopic + " (" + importance + "% interview importance for " + company + ") is today's highest-ROI focus. " +
+               "Solve 2 medium problems in " + weakTopic + " without hints before reviewing new material. " +
+               "Complete any overdue revision items first — retention compounds.";
     }
 
     private record CachedAnswer(String answer, Instant expiresAt) {

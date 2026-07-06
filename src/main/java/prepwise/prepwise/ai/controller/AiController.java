@@ -6,8 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import prepwise.prepwise.ai.dto.*;
 import prepwise.prepwise.ai.service.*;
+import prepwise.prepwise.ai.util.CompanyPatternWeights;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/ai")
@@ -60,5 +62,10 @@ public class AiController {
     @PostMapping("/daily-coach")
     public ResponseEntity<DailyCoachResponse> dailyCoach(@RequestBody DailyCoachRequest request) {
         return ResponseEntity.ok(dailyCoachService.getBriefing(request));
+    }
+
+    @GetMapping("/companies")
+    public ResponseEntity<Set<String>> supportedCompanies() {
+        return ResponseEntity.ok(CompanyPatternWeights.knownCompanies());
     }
 }

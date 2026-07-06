@@ -12,8 +12,8 @@ import prepwise.prepwise.entity.User;
 import prepwise.prepwise.service.CurrentUserService;
 import prepwise.prepwise.service.ProblemService;
 
-import java.util.LinkedHashMap;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -58,6 +58,14 @@ public class ReadinessService {
 
         List<String> keyStrengths = keyStrengths(breakdown);
         List<String> improvementAreas = improvementAreas(breakdown);
+        String hiringRisk = IntelligenceScoring.hiringRisk(score);
+        String expectedOutcome = IntelligenceScoring.expectedOutcome(score);
+
+        Map<String, Object> enrichedSummary = new LinkedHashMap<>(summary);
+        enrichedSummary.put("hiringRisk", hiringRisk);
+        enrichedSummary.put("expectedOutcome", expectedOutcome);
+        enrichedSummary.put("weaknesses", improvementAreas);
+        enrichedSummary.put("strengths", keyStrengths);
 
         return ReadinessResponse.builder()
                 .score(IntelligenceScoring.round1(score))
@@ -65,7 +73,11 @@ public class ReadinessService {
                 .breakdown(breakdown)
                 .keyStrengths(keyStrengths)
                 .improvementAreas(improvementAreas)
-                .explanation(llmService.generateReadinessExplanation(summary))
+                .explanation(llmService.generateReadinessExplanation(enrichedSummary))
+                .hiringRisk(hiringRisk)
+                .expectedOutcome(expectedOutcome)
+                .blind75Solved(blindSolved)
+                .currentStreak(snapshot.currentStreak())
                 .build();
     }
 
