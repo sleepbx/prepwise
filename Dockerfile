@@ -11,7 +11,7 @@ FROM eclipse-temurin:21-jdk-alpine AS backend
 WORKDIR /app
 COPY . .
 COPY --from=frontend /app/frontend/dist ./src/main/resources/static
-RUN ./mvnw package -DskipTests -q
+RUN chmod +x mvnw && ./mvnw package -DskipTests -q
 
 # Stage 3: Minimal runtime image
 FROM eclipse-temurin:21-jre-alpine
