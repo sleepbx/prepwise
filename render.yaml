@@ -11,6 +11,10 @@ services:
         sync: false
       - key: JWT_SECRET
         generateValue: true
+      - key: BCRYPT_STRENGTH
+        value: "8"
+      - key: REFRESH_DEMO_PASSWORD
+        value: "true"
       - key: PREPWISE_AI_ENABLED
         value: "true"
       - key: AI_TOKEN_BUDGET_PER_MINUTE

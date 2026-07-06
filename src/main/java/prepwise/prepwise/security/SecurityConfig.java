@@ -38,6 +38,9 @@ public class SecurityConfig {
     @Value("${prepwise.cors.allowed-origins:http://localhost:5173,http://localhost:3000}")
     private String allowedOrigins;
 
+    @Value("${prepwise.security.bcrypt-strength:10}")
+    private int bcryptStrength;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -88,6 +91,6 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(bcryptStrength);
     }
 }

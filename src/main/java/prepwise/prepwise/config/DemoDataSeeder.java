@@ -32,12 +32,26 @@ public class DemoDataSeeder implements CommandLineRunner {
     @Value("${prepwise.seed.demo:true}")
     private boolean seedDemo;
 
+    @Value("${prepwise.seed.refresh-demo-password:true}")
+    private boolean refreshDemoPassword;
+
     private static final String DEMO_EMAIL = "demo@prepwise.dev";
     private static final String DEMO_PASSWORD = "demo123";
 
     @Override
     public void run(String... args) {
-        if (!seedDemo || userRepository.existsByEmail(DEMO_EMAIL)) return;
+        if (!seedDemo) return;
+
+        var existingDemo = userRepository.findByEmail(DEMO_EMAIL);
+        if (existingDemo.isPresent()) {
+            if (refreshDemoPassword) {
+                User demo = existingDemo.get();
+                demo.setPassword(passwordEncoder.encode(DEMO_PASSWORD));
+                userRepository.save(demo);
+                log.info("Demo user password hash refreshed for faster demo login");
+            }
+            return;
+        }
 
         User demo = userRepository.save(User.builder()
                 .name("Alex Rivera")

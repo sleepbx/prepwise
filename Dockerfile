@@ -17,5 +17,7 @@ RUN chmod +x mvnw && ./mvnw package -DskipTests -q
 FROM eclipse-temurin:21-jre-alpine
 WORKDIR /app
 COPY --from=backend /app/target/prepwise-0.0.1-SNAPSHOT.jar app.jar
+ENV BCRYPT_STRENGTH=8
+ENV REFRESH_DEMO_PASSWORD=true
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
