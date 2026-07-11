@@ -31,3 +31,18 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Local secrets ###
+application-local.properties
+.env
+.env.local
+.env.*
+!.env.example
+
+### SQLite ###
+*.db
+*.db-shm
+*.db-wal
+
+### Vercel ###
+.vercel/

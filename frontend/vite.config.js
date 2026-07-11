@@ -10,4 +10,12 @@ export default defineConfig({
       '/api': 'http://localhost:8080',
     },
   },
+  optimizeDeps: {
+    include: ['react-is'],
+  },
+  build: {
+    rollupOptions: {
+      external: [],
+    },
+  },
 })

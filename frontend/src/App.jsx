@@ -6,8 +6,10 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Analytics from './pages/Analytics';
+import Practice from './pages/Practice';
 import History from './pages/History';
 import Profile from './pages/Profile';
+import AI from './pages/AI';
 
 export default function App() {
   return (
@@ -24,6 +26,16 @@ export default function App() {
           <Route path="/analytics" element={
             <ProtectedRoute>
               <Layout><Analytics /></Layout>
+            </ProtectedRoute>
+          } />
+          <Route path="/practice" element={
+            <ProtectedRoute>
+              <Layout><Practice /></Layout>
+            </ProtectedRoute>
+          } />
+          <Route path="/ai" element={
+            <ProtectedRoute>
+              <Layout><AI /></Layout>
             </ProtectedRoute>
           } />
           <Route path="/history" element={

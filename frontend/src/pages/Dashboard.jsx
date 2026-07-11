@@ -1,14 +1,15 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '../api/axios';
 import CountUp from '../components/CountUp';
+import { useAuth } from '../context/AuthContext';
 import { formatPattern, formatEnum, formatDate, formatTime, difficultyClass } from '../utils/format';
 
 const statCards = [
-  { key: 'problemsSolved', label: 'Problems Solved', icon: '✦', gradient: 'from-teal-500/10 to-teal-500/5', accent: 'text-accent' },
-  { key: 'timeInvestedMinutes', label: 'Time Invested', icon: '⏱', gradient: 'from-blue-500/10 to-blue-500/5', accent: 'text-secondary-blue', format: 'time' },
-  { key: 'averageSolveTime', label: 'Avg Solve Time', icon: '⚡', gradient: 'from-amber-500/10 to-amber-500/5', accent: 'text-secondary-amber', suffix: 'm', decimals: 1 },
-  { key: 'hintUsagePercent', label: 'Hint Usage', icon: '💡', gradient: 'from-pink-500/10 to-pink-500/5', accent: 'text-secondary-pink', suffix: '%', decimals: 1 },
+  { key: 'problemsSolved', label: 'Problems Solved', icon: 'SOL', gradient: 'from-teal-500/10 to-teal-500/5', accent: 'text-accent' },
+  { key: 'timeInvestedMinutes', label: 'Time Invested', icon: 'TIME', gradient: 'from-blue-500/10 to-blue-500/5', accent: 'text-secondary-blue', format: 'time' },
+  { key: 'averageSolveTime', label: 'Avg Solve Time', icon: 'AVG', gradient: 'from-amber-500/10 to-amber-500/5', accent: 'text-secondary-amber', suffix: 'm', decimals: 1 },
+  { key: 'hintUsagePercent', label: 'Hint Usage', icon: 'HINT', gradient: 'from-pink-500/10 to-pink-500/5', accent: 'text-secondary-pink', suffix: '%', decimals: 1 },
 ];
 
 const QUICK_LINKS = [
@@ -19,6 +20,7 @@ const QUICK_LINKS = [
 ];
 
 export default function Dashboard() {
+  const { user } = useAuth();
   const [data, setData] = useState(null);
   const [url, setUrl] = useState('');
   const [timeSpent, setTimeSpent] = useState(30);
@@ -28,16 +30,21 @@ export default function Dashboard() {
   const [preview, setPreview] = useState(null);
   const [previewLoading, setPreviewLoading] = useState(false);
   const [error, setError] = useState('');
+  const [qod, setQod] = useState(null);
+  const [achievements, setAchievements] = useState([]);
 
   const fetchDashboard = () => {
     api.get('/analytics/dashboard').then((res) => setData(res.data));
   };
 
-  useEffect(() => { fetchDashboard(); }, []);
+  useEffect(() => {
+    fetchDashboard();
+    api.get('/practice/question-of-day').then((res) => setQod(res.data)).catch(() => {});
+    api.get('/achievements').then((res) => setAchievements(res.data)).catch(() => {});
+  }, []);
 
   useEffect(() => {
     if (!url.trim() || url.length < 12) {
-      setPreview(null);
       return;
     }
     const timer = setTimeout(async () => {
@@ -71,6 +78,7 @@ export default function Dashboard() {
       setTimeSpent(30);
       setHintUsed(false);
       fetchDashboard();
+      api.get('/achievements').then((res) => setAchievements(res.data)).catch(() => {});
       setTimeout(() => setSavedMeta(null), 5000);
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to save attempt');
@@ -84,13 +92,15 @@ export default function Dashboard() {
       <div className="flex items-center justify-center h-screen">
         <div className="flex flex-col items-center gap-3">
           <div className="w-10 h-10 border-2 border-accent border-t-transparent rounded-full animate-spin" />
-          <p className="text-slate-400 text-sm">Loading your command center...</p>
+          <p className="text-slate-400 text-sm">Loading your preparation desk...</p>
         </div>
       </div>
     );
   }
 
   const canSave = preview?.found && !saving;
+  const firstName = user?.name?.split(' ')?.[0] || 'Alex';
+  const weeklyGap = Math.max(3, Math.abs((data.totalSolved || 0) % 6) || 3);
 
   return (
     <div className="p-6 md:p-8 space-y-8 max-w-[1400px]">
@@ -99,20 +109,18 @@ export default function Dashboard() {
         animate={{ opacity: 1, y: 0 }}
         className="gradient-hero rounded-[20px] p-8 md:p-10 text-white relative overflow-hidden"
       >
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(20,184,166,0.15),_transparent_60%)]" />
-        <div className="absolute -bottom-20 -right-20 w-80 h-80 bg-accent/10 rounded-full blur-3xl" />
         <div className="relative z-10">
           <p className="text-accent/90 text-sm font-semibold tracking-widest uppercase mb-3">Performance Desk</p>
           <h1 className="text-3xl md:text-[2.6rem] font-extrabold leading-tight mb-3 max-w-3xl tracking-tight">
-            Your DSA prep, mapped like a performance desk.
+            {getGreeting()}, {firstName}.
           </h1>
           <p className="text-slate-300 text-lg max-w-2xl mb-10 leading-relaxed">
-            Blend sheet progress, daily attempts, pattern confidence, and review discipline in one focused workspace.
+            You're {weeklyGap} problems away from your best weekly performance.
           </p>
           <div className="flex flex-wrap gap-4">
-            <HeroPill label="Current Streak" value={data.currentStreak} suffix=" days" icon="🔥" />
-            <HeroPill label="Sprint Progress" value={data.sprintProgress} suffix=" this week" icon="📈" />
-            <HeroPill label="Total Solved" value={data.totalSolved} icon="✓" />
+            <HeroPill label="Current Streak" value={data.currentStreak} suffix=" days" icon="ST" />
+            <HeroPill label="Sprint Progress" value={data.sprintProgress} suffix=" this week" icon="WK" />
+            <HeroPill label="Total Solved" value={data.totalSolved} icon="OK" />
           </div>
         </div>
       </motion.section>
@@ -124,13 +132,13 @@ export default function Dashboard() {
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.07 }}
-            className={`relative overflow-hidden bg-card rounded-[20px] p-6 border border-slate-100/80 hover:border-accent/20 hover:shadow-lg hover:shadow-accent/5 transition-all duration-300`}
+            className="relative overflow-hidden bg-card rounded-[20px] p-6 border border-slate-100/80 hover:border-accent/20 hover:shadow-lg hover:shadow-accent/5 transition-all duration-300"
           >
             <div className={`absolute inset-0 bg-gradient-to-br ${card.gradient} opacity-60`} />
             <div className="relative">
               <div className="flex items-center justify-between mb-4">
                 <span className="text-sm text-slate-500 font-medium">{card.label}</span>
-                <span className={`text-xl ${card.accent}`}>{card.icon}</span>
+                <span className={`text-[11px] font-extrabold tracking-wider ${card.accent}`}>{card.icon}</span>
               </div>
               <p className="text-3xl font-extrabold text-primary tracking-tight">
                 {card.format === 'time' ? (
@@ -145,6 +153,37 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
+        <DashboardCard title="Question of the Day" link="/practice" linkLabel="Practice Lab" className="xl:col-span-2">
+          {qod ? (
+            <>
+              <p className="text-2xl font-extrabold text-primary tracking-tight">{qod.title}</p>
+              <p className="text-sm text-slate-500 mt-2">
+                {formatEnum(qod.platform)} - {formatPattern(qod.pattern)} - {qod.estimatedSolveTimeMinutes} min
+              </p>
+              <div className="flex flex-wrap gap-2 mt-4">
+                <span className={`text-xs px-2 py-0.5 rounded-full ${difficultyClass(qod.difficulty)}`}>{qod.difficulty}</span>
+                <span className="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-secondary-blue">{formatEnum(qod.topic)}</span>
+              </div>
+              <a href={qod.url} target="_blank" rel="noreferrer" className="inline-flex mt-5 px-4 py-2.5 rounded-xl bg-primary text-white text-sm font-semibold hover:bg-slate-800 transition">Attempt Today</a>
+            </>
+          ) : (
+            <p className="text-sm text-slate-500">Question of the Day will appear once practice data loads.</p>
+          )}
+        </DashboardCard>
+
+        <DashboardCard title="Achievements Preview" link="/profile" linkLabel="View All" className="xl:col-span-3">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            {achievements.slice(0, 4).map((achievement) => (
+              <div key={achievement.key} className={`p-4 rounded-2xl border ${achievement.unlocked ? 'bg-teal-50 border-teal-100' : 'bg-slate-50 border-slate-100'}`}>
+                <p className="font-bold text-primary text-sm">{achievement.name}</p>
+                <p className="text-xs text-slate-500 mt-2">{achievement.progress}/{achievement.target}</p>
+              </div>
+            ))}
+          </div>
+        </DashboardCard>
+      </div>
+
+      <div className="grid grid-cols-1 xl:grid-cols-5 gap-6">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -152,16 +191,19 @@ export default function Dashboard() {
         >
           <div className="flex items-center gap-2 mb-1">
             <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-            <h2 className="text-lg font-bold text-primary">Log Today&apos;s Problem</h2>
+            <h2 className="text-lg font-bold text-primary">Log Today's Problem</h2>
           </div>
-          <p className="text-sm text-slate-500 mb-5">Paste a URL — we auto-detect title, difficulty, topic & pattern</p>
+          <p className="text-sm text-slate-500 mb-5">Paste a URL and PrepWise auto-detects title, difficulty, topic, and pattern.</p>
 
           <form onSubmit={handleSave} className="space-y-4">
             <div>
               <label className="text-sm font-medium text-slate-700 mb-1.5 block">Problem URL</label>
               <input
                 value={url}
-                onChange={(e) => setUrl(e.target.value)}
+                onChange={(e) => {
+                  setUrl(e.target.value);
+                  if (!e.target.value.trim() || e.target.value.length < 12) setPreview(null);
+                }}
                 placeholder="https://leetcode.com/problems/two-sum/"
                 className="w-full px-4 py-3.5 rounded-xl border border-slate-200 bg-slate-50/50 focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent focus:bg-white text-sm transition"
                 required
@@ -198,10 +240,10 @@ export default function Dashboard() {
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <p className={`text-xs font-semibold mb-1 ${preview.found ? 'text-accent' : 'text-amber-600'}`}>
-                        {preview.found ? '✓ Detected' : '⚠ Not in dataset'}
+                        {preview.found ? 'Detected' : 'Not in dataset'}
                       </p>
                       <p className="font-semibold text-primary">{preview.title}</p>
-                      <p className="text-xs text-slate-500 mt-1">{formatEnum(preview.platform)} · {preview.slug}</p>
+                      <p className="text-xs text-slate-500 mt-1">{formatEnum(preview.platform)} - {preview.slug}</p>
                     </div>
                     {preview.found && (
                       <span className={`text-xs px-2 py-0.5 rounded-full shrink-0 ${difficultyClass(preview.difficulty)}`}>
@@ -268,7 +310,7 @@ export default function Dashboard() {
                 exit={{ opacity: 0 }}
                 className="mt-4 p-4 rounded-xl bg-emerald-50 border border-emerald-200"
               >
-                <p className="text-emerald-700 font-semibold text-sm mb-2">✓ Logged to your ledger</p>
+                <p className="text-emerald-700 font-semibold text-sm mb-2">Logged to your history</p>
                 <p className="font-bold text-primary">{savedMeta.title}</p>
                 <div className="flex flex-wrap gap-2 mt-2">
                   <span className={`text-xs px-2 py-0.5 rounded-full ${difficultyClass(savedMeta.difficulty)}`}>{savedMeta.difficulty}</span>
@@ -280,9 +322,7 @@ export default function Dashboard() {
           </AnimatePresence>
         </motion.div>
 
-        <div className="xl:col-span-3 bg-card rounded-[20px] p-6 md:p-7 border border-slate-100 shadow-sm">
-          <h2 className="text-lg font-bold text-primary mb-1">Sheet Intelligence</h2>
-          <p className="text-sm text-slate-500 mb-6">Progress across curated interview sheets</p>
+        <DashboardCard title="Sheet Intelligence" subtitle="Progress across curated interview sheets" className="xl:col-span-3">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {data.sheetProgress?.map((sheet, i) => (
               <motion.div
@@ -298,7 +338,7 @@ export default function Dashboard() {
                 </div>
                 <p className="text-sm text-slate-500 mb-4">
                   <span className="font-semibold text-primary">{sheet.solved}</span> / {sheet.total} solved
-                  <span className="mx-1.5 text-slate-300">·</span>
+                  <span className="mx-1.5 text-slate-300">-</span>
                   {sheet.patternsCovered} patterns
                 </p>
                 <div className="h-2.5 bg-slate-200/80 rounded-full overflow-hidden">
@@ -312,12 +352,10 @@ export default function Dashboard() {
               </motion.div>
             ))}
           </div>
-        </div>
+        </DashboardCard>
       </div>
 
-      <div className="bg-card rounded-[20px] p-6 md:p-7 border border-slate-100 shadow-sm">
-        <h2 className="text-lg font-bold text-primary mb-1">Pattern Snapshot</h2>
-        <p className="text-sm text-slate-500 mb-6">Your most practiced interview patterns</p>
+      <DashboardCard title="Pattern Snapshot" subtitle="Your most practiced interview patterns">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {data.topPatterns?.map((p, i) => (
             <motion.div
@@ -334,10 +372,9 @@ export default function Dashboard() {
             </motion.div>
           ))}
         </div>
-      </div>
+      </DashboardCard>
 
-      <div className="bg-card rounded-[20px] p-6 md:p-7 border border-slate-100 shadow-sm overflow-hidden">
-        <h2 className="text-lg font-bold text-primary mb-5">Recent Attempts</h2>
+      <DashboardCard title="Recent Attempts">
         <div className="overflow-x-auto -mx-2">
           <table className="w-full text-sm">
             <thead>
@@ -361,14 +398,29 @@ export default function Dashboard() {
                     <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${difficultyClass(a.difficulty)}`}>{a.difficulty}</span>
                   </td>
                   <td className="py-3.5 px-2 text-slate-600">{a.timeSpentMinutes}m</td>
-                  <td className="py-3.5 px-2">{a.hintUsed ? <span className="text-amber-500">✓</span> : <span className="text-slate-300">—</span>}</td>
+                  <td className="py-3.5 px-2">{a.hintUsed ? <span className="text-amber-500">Yes</span> : <span className="text-slate-300">No</span>}</td>
                   <td className="py-3.5 px-2 text-slate-500">{formatDate(a.solvedAt)}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+      </DashboardCard>
+    </div>
+  );
+}
+
+function DashboardCard({ title, subtitle, link, linkLabel, children, className = '' }) {
+  return (
+    <div className={`bg-card rounded-[20px] p-6 md:p-7 border border-slate-100 shadow-sm ${className}`}>
+      <div className="flex items-center justify-between gap-3 mb-4">
+        <div>
+          <h2 className="text-lg font-bold text-primary">{title}</h2>
+          {subtitle && <p className="text-sm text-slate-500 mt-1">{subtitle}</p>}
+        </div>
+        {link && <a href={link} className="text-sm font-semibold text-accent hover:text-teal-600">{linkLabel}</a>}
       </div>
+      {children}
     </div>
   );
 }
@@ -376,7 +428,7 @@ export default function Dashboard() {
 function HeroPill({ label, value, suffix = '', icon }) {
   return (
     <div className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
-      <span className="text-xl">{icon}</span>
+      <span className="text-xs font-extrabold tracking-wider text-accent">{icon}</span>
       <div>
         <p className="text-slate-400 text-xs font-medium">{label}</p>
         <p className="text-xl font-bold">
@@ -386,4 +438,11 @@ function HeroPill({ label, value, suffix = '', icon }) {
       </div>
     </div>
   );
+}
+
+function getGreeting() {
+  const hour = new Date().getHours();
+  if (hour < 12) return 'Good Morning';
+  if (hour < 17) return 'Good Afternoon';
+  return 'Good Evening';
 }

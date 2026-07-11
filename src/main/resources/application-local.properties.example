@@ -1,0 +1,16 @@
+# Copy to application-local.properties (auto-loaded, gitignored)
+PREPWISE_AI_ENABLED=true
+
+# Groq — fast responses, 14 400 req/day free. Used for: readiness, analytics insights, daily coach
+GROQ_API_KEY=YOUR_GROQ_API_KEY_HERE
+GROQ_MODEL=llama-3.1-8b-instant
+GROQ_ALLOW_AUTO_INSIGHTS=true
+
+# Gemini — better reasoning, 1 500 req/day free. Used for: study plan, weakness analysis, company advisor
+GEMINI_API_KEY=YOUR_GEMINI_API_KEY_HERE
+GEMINI_MODEL=gemini-2.0-flash-001
+
+# Free-tier guardrails — deterministic fallback kicks in when reached
+AI_TOKEN_BUDGET_PER_MINUTE=4000
+AI_REQUEST_BUDGET_PER_MINUTE=4
+AI_MAX_OUTPUT_TOKENS=160

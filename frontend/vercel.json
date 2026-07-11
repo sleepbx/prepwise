@@ -3,6 +3,10 @@
     {
       "source": "/api/:path*",
       "destination": "https://prepwise-7zvd.onrender.com/api/:path*"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
