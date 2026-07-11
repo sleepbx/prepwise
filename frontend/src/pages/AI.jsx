@@ -797,7 +797,7 @@ function CompanyTab({ company, setCompany, companyAdvice, adviceLoading, getComp
             {/* Focus areas + allocation */}
             <Card title="Weekly Time Allocation">
               <div className="space-y-3">
-                {companyAdvice.focusAreas?.map((area, i) => {
+                {companyAdvice.focusAreas?.map((area) => {
                   const alloc = companyAdvice.weeklyAllocation?.[area];
                   const pct = alloc ? parseInt(alloc) : 33;
                   return (
