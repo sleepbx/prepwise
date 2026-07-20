@@ -34,6 +34,7 @@ public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
     private final UserDetailsService userDetailsService;
+    private final JwtAuthEntryPoint jwtAuthEntryPoint;
 
     @Value("${prepwise.cors.allowed-origins:http://localhost:5173,http://localhost:3000}")
     private String allowedOrigins;
@@ -55,6 +56,8 @@ public class SecurityConfig {
                         // Static assets and SPA routes — public (React handles its own auth redirects)
                         .anyRequest().permitAll()
                 )
+                // Answer 401 (not Spring's default 403) when the caller is unauthenticated
+                .exceptionHandling(e -> e.authenticationEntryPoint(jwtAuthEntryPoint))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
