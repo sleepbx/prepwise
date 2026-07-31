@@ -53,7 +53,7 @@ public class LLMService {
     // Groq (llama-3.1-8b-instant): fast responses, 14 400 req/day free — used for short/interactive features
     // Gemini (gemini-2.0-flash-001): better reasoning, 1 500 req/day free — used for complex multi-topic analysis
     public String generateStudyPlanExplanation(Map<String, Object> summary) {
-        return explain(AiPrompts.studyPlan(toCompactJson(summary)), fallbackStudyPlan(summary), false, "gemini");
+        return explain(AiPrompts.studyPlan(toCompactJson(summary)), fallbackStudyPlan(summary), false, "groq");
     }
 
     public String generateWeaknessExplanation(Map<String, Object> summary) {
@@ -168,12 +168,14 @@ public class LLMService {
         var topics = (java.util.List<?>) s.getOrDefault("priorityTopics", java.util.List.of());
         int days = Integer.parseInt(s.getOrDefault("daysRemaining", 30).toString());
         int hours = Integer.parseInt(s.getOrDefault("totalHours", 0).toString());
+        Object baseline = s.getOrDefault("baselineReadiness", 0);
         String topStr = topics.isEmpty() ? "the highest-gap topics" : topics.stream().limit(3)
                 .map(Object::toString).collect(java.util.stream.Collectors.joining(", "));
         return days + " days and " + hours + " hours available. " +
-               "Coverage gaps in " + topStr + " are the highest-ROI targets based on your current metrics vs. company distribution. " +
-               "Front-load the weakest topics in the first 60% of time, then shift to revision and timed practice in the final weeks. " +
-               "Solve problems without hints; use hint-free accuracy as the primary quality signal.";
+               "Baseline readiness is " + baseline + ", so the plan front-loads " + topStr +
+               " because they combine high company weight with low coverage or weak retention signals. " +
+               "The schedule moves from concept repair to speed blocks, then mixed mocks and revision, with one secondary topic each week to prevent forgetting. " +
+               "Use no-hint first attempts, revision completion, and timed mixed sets as the quality gates.";
     }
 
     @SuppressWarnings("unchecked")

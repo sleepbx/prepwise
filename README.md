@@ -169,7 +169,7 @@ GEMINI_MODEL=gemini-2.0-flash-001
 
 AI_TOKEN_BUDGET_PER_MINUTE=4000
 AI_REQUEST_BUDGET_PER_MINUTE=4
-AI_MAX_OUTPUT_TOKENS=160
+AI_MAX_OUTPUT_TOKENS=260
 ```
 
 The app falls back to deterministic rule-based insights when provider keys are missing or budgets are exhausted.

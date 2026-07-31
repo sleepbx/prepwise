@@ -22,4 +22,4 @@ services:
       - key: AI_REQUEST_BUDGET_PER_MINUTE
         value: "4"
       - key: AI_MAX_OUTPUT_TOKENS
-        value: "160"
+        value: "260"

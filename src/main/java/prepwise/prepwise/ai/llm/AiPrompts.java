@@ -17,8 +17,10 @@ public final class AiPrompts {
 
     public static String studyPlan(String summaryJson) {
         return """
-                Explain why these topics were prioritized for this study plan and the expected readiness impact.
-                Reference the coverage gaps, company distribution, and days remaining. Be specific about expected gains.
+                Act as the study-plan orchestrator for this generated schedule.
+                Explain why the ranked topics, weekly phases, secondary retention topics, and risk controls are the right sequence.
+                Reference the baseline readiness, coverage gaps, company distribution, days remaining, total hours, and expected weekly gains.
+                Give a concrete execution rule for what the user should do if they fall behind.
                 Data:
                 """ + summaryJson;
     }
