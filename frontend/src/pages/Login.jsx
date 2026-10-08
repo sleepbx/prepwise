@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import AuthLayout from '../components/AuthLayout';
@@ -8,8 +8,18 @@ export default function Login() {
   const [email, setEmail] = useState('demo@prepwise.dev');
   const [password, setPassword] = useState('demo123');
   const [error, setError] = useState('');
+  const [waking, setWaking] = useState(false);
   const { login, loading } = useAuth();
   const navigate = useNavigate();
+
+  // The backend runs on a free tier that sleeps when idle; the first request
+  // wakes it (~1 min). The axios layer retries automatically and emits this
+  // event so we can reassure the user instead of showing a false error.
+  useEffect(() => {
+    const onWaking = (e) => setWaking(e.detail === true);
+    window.addEventListener('prepwise:waking', onWaking);
+    return () => window.removeEventListener('prepwise:waking', onWaking);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,6 +29,8 @@ export default function Login() {
       navigate('/');
     } catch (err) {
       setError(err.response?.data?.message || 'Invalid credentials');
+    } finally {
+      setWaking(false);
     }
   };
 
@@ -36,6 +48,13 @@ export default function Login() {
 
         {error && (
           <div className="mb-4 p-3 rounded-xl bg-red-50 text-red-600 text-sm">{error}</div>
+        )}
+
+        {waking && !error && (
+          <div className="mb-4 p-3 rounded-xl bg-amber-50 text-amber-700 text-sm flex items-center gap-2">
+            <span className="inline-block w-3.5 h-3.5 border-2 border-amber-400 border-t-transparent rounded-full animate-spin" />
+            Waking up the server — this can take up to a minute on first load.
+          </div>
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -66,7 +85,7 @@ export default function Login() {
             disabled={loading}
             className="w-full py-3.5 rounded-xl bg-accent text-white font-semibold hover:bg-teal-600 transition disabled:opacity-60"
           >
-            {loading ? 'Signing in...' : 'Sign In'}
+            {loading ? (waking ? 'Waking server…' : 'Signing in...') : 'Sign In'}
           </motion.button>
         </form>
 
