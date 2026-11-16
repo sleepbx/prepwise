@@ -4,17 +4,21 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+@Slf4j
 @Service
 public class JwtService {
 
@@ -23,6 +27,25 @@ public class JwtService {
 
     @Value("${prepwise.jwt.expiration-ms}")
     private long expirationMs;
+
+    private SecretKey signingKey;
+
+    /**
+     * Builds the signing key once. When JWT_SECRET is not configured, a random key is
+     * generated instead of falling back to a secret committed in the repository; tokens
+     * then stop validating after a restart, which is logged so it is noticed.
+     */
+    @PostConstruct
+    void initSigningKey() {
+        if (secret == null || secret.isBlank()) {
+            byte[] random = new byte[64];
+            new SecureRandom().nextBytes(random);
+            signingKey = Keys.hmacShaKeyFor(random);
+            log.warn("JWT_SECRET is not set: using a random signing key. Tokens will be invalid after a restart. Set JWT_SECRET in production.");
+        } else {
+            signingKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        }
+    }
 
     public String extractEmail(String token) {
         return extractClaim(token, Claims::getSubject);
@@ -65,7 +88,9 @@ public class JwtService {
     }
 
     private SecretKey getSigningKey() {
-        byte[] keyBytes = secret.getBytes(StandardCharsets.UTF_8);
-        return Keys.hmacShaKeyFor(keyBytes);
+        if (signingKey == null) {
+            initSigningKey();
+        }
+        return signingKey;
     }
 }

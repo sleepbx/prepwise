@@ -14,3 +14,6 @@ GEMINI_MODEL=gemini-2.0-flash-001
 AI_TOKEN_BUDGET_PER_MINUTE=4000
 AI_REQUEST_BUDGET_PER_MINUTE=4
 AI_MAX_OUTPUT_TOKENS=160
+
+# JWT signing key, 32+ characters. Without it, tokens are invalidated on every restart.
+JWT_SECRET=replace-with-a-long-random-local-dev-secret-0123456789

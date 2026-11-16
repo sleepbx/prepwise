@@ -56,6 +56,22 @@ class JwtServiceTest {
     }
 
     @Test
+    void missingSecretFallsBackToARandomKeyThatStillWorks() {
+        JwtService jwt = jwtService("");
+        String token = jwt.generateToken(alice);
+
+        assertThat(jwt.isTokenValid(token, alice)).isTrue();
+    }
+
+    @Test
+    void randomKeysDifferBetweenInstancesSoNoSharedDefaultExists() {
+        String token = jwtService("").generateToken(alice);
+        JwtService restarted = jwtService("");
+
+        assertThatThrownBy(() -> restarted.extractEmail(token)).isInstanceOf(JwtException.class);
+    }
+
+    @Test
     void tokenSignedWithAnotherSecretIsRejected() {
         String token = jwtService(SECRET).generateToken(alice);
         JwtService other = jwtService("a-completely-different-secret-of-32-bytes+");
