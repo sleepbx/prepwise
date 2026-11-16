@@ -14,7 +14,7 @@ Most prep trackers count solved problems. PrepWise measures whether the practice
 
 | Capability | What It Delivers |
 |---|---|
-| Interview readiness score | A weighted score based on coverage, accuracy, consistency, revision rate, speed, and difficulty mix |
+| Interview readiness score | A weighted score based on coverage, consistency, revision, accuracy and speed |
 | Weakness analysis | Topic-level diagnosis with confidence, effort estimate, expected readiness gain, and recommended focus |
 | Revision priorities | Spaced repetition queue grouped into Immediate, This Week, and Later |
 | Company advisor | Gap analysis against interview patterns for supported companies |
@@ -76,14 +76,15 @@ This keeps recommendations grounded in deterministic data. If external model pro
 
 ### Readiness Score
 
-A composite score built from practical interview signals:
+A weighted score (0–100) built from five interview signals:
 
-- Topic coverage
-- Accuracy
-- Consistency
-- Revision quality
-- Time efficiency
-- Difficulty distribution
+| Signal | Weight | Measured as |
+|---|---|---|
+| Coverage | 35% | Blind 75 problems solved |
+| Consistency | 25% | Current daily streak |
+| Revision | 20% | Share of solved problems revisited |
+| Accuracy | 15% | 100 minus hint rate |
+| Speed | 5% | Average solve time |
 
 ### Weakness Analysis
 
@@ -91,7 +92,7 @@ Ranks weak zones by combining performance data with interview importance. A low-
 
 ### Revision System
 
-Uses spaced repetition intervals and decay-weighted scoring to keep old solves from going stale.
+Each solved problem comes due for review 1, 7, 14 and 30 days after its last solve or review. Problems 30+ days old or solved with a hint are marked high priority. A separate revision-priority list weighs solve time, hint dependence, missed revisions and time since the last solve.
 
 ### Company Advisor
 
@@ -173,6 +174,29 @@ AI_MAX_OUTPUT_TOKENS=160
 ```
 
 The app falls back to deterministic rule-based insights when provider keys are missing or budgets are exhausted.
+
+### Environment variables
+
+| Variable | Purpose |
+|---|---|
+| `JWT_SECRET` | Signing key for login tokens, 32+ characters. Required in every deployed environment. If it is missing, the app generates a random key at startup and logs a warning, so tokens stop working after each restart. |
+| `CORS_ORIGINS` | Comma-separated origins allowed to call the API directly. Defaults to `*`. In production the frontend calls the API through the Vercel rewrite, so set this to your frontend URL (for example `https://prepwise-mu-one.vercel.app`) and confirm login still works. |
+| `GROQ_API_KEY`, `GEMINI_API_KEY` | Optional model providers for written explanations. |
+| `AI_TOKEN_BUDGET_PER_MINUTE`, `AI_REQUEST_BUDGET_PER_MINUTE`, `AI_MAX_OUTPUT_TOKENS` | Cost guardrails for model calls. |
+
+### Data persistence
+
+Data is stored in SQLite at `./prepwise.db`. On Render's free tier the filesystem is ephemeral, so the database is reset on every redeploy, restart or spin-down. The demo account is re-created on startup by `DemoDataSeeder`; accounts created on the live demo do not survive a restart. For durable data, point `spring.datasource.url` at a managed database or attach a persistent disk on a paid plan.
+
+---
+
+## Testing
+
+```bash
+sh mvnw test
+```
+
+Unit tests cover the readiness and weakness scoring weights, the spaced-repetition review queue, LLM provider failover with caching and request budgets, and JWT issuing and validation.
 
 ---
 
